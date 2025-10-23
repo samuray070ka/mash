@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
-import { mockProducts } from '../mockData';
-import { Plus, Search, Edit, Trash2, Eye, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import api from '../API';
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,10 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+
+const API_URL = 'https://tokenized.pythonanywhere.com/api/products/';
 
 const ProductsManagement = () => {
   const [products, setProducts] = useState([]);
@@ -26,56 +25,79 @@ const ProductsManagement = () => {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [viewingProduct, setViewingProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name_uz: '',
     name_ru: '',
-    description_uz: '',
-    description_ru: '',
+    description: '',
     category_uz: '',
     category_ru: '',
     price: '',
-    image_url: '',
-    specifications_uz: '',
-    specifications_ru: '',
+    image: null,
+    specifications_uz: '{}',
+    specifications_ru: '{}',
   });
 
   useEffect(() => {
-    setProducts(mockProducts);
+    fetchProducts();
   }, []);
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(API_URL);
+      setProducts(res.data);
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: 'Error',
+        description: 'Failed to load products from server',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredProducts = products.filter(
-    (product) =>
-      product.name_uz.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.name_ru.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category_uz.toLowerCase().includes(searchTerm.toLowerCase())
+    (p) =>
+      p.name_uz?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.name_ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category_uz?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category_ru?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getLabel = (key) => {
+    const base = key.replace(/_(uz|ru)$/, '');
+    const langMatch = key.match(/_(uz|ru)$/);
+    const lang = langMatch ? ` (${langMatch[1].toUpperCase()})` : '';
+    return base.replace(/_/g, ' ').toUpperCase() + lang;
+  };
 
   const handleOpenDialog = (product = null) => {
     if (product) {
       setEditingProduct(product);
       setFormData({
-        name_uz: product.name_uz,
-        name_ru: product.name_ru,
-        description_uz: product.description_uz,
-        description_ru: product.description_ru,
-        category_uz: product.category_uz,
-        category_ru: product.category_ru,
-        price: product.price,
-        image_url: product.image_url,
-        specifications_uz: JSON.stringify(product.specifications_uz, null, 2),
-        specifications_ru: JSON.stringify(product.specifications_ru, null, 2),
+        name_uz: product.name_uz || '',
+        name_ru: product.name_ru || '',
+        description: product.description || '',
+        category_uz: product.category_uz || '',
+        category_ru: product.category_ru || '',
+        price: product.price || '',
+        image: null,
+        specifications_uz: JSON.stringify(product.specifications_uz || {}, null, 2),
+        specifications_ru: JSON.stringify(product.specifications_ru || {}, null, 2),
       });
     } else {
       setEditingProduct(null);
       setFormData({
         name_uz: '',
         name_ru: '',
-        description_uz: '',
-        description_ru: '',
+        description: '',
         category_uz: '',
         category_ru: '',
         price: '',
-        image_url: '',
+        image: null,
         specifications_uz: '{}',
         specifications_ru: '{}',
       });
@@ -88,50 +110,67 @@ const ProductsManagement = () => {
     setEditingProduct(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const newProduct = {
-        id: editingProduct?.id || `prod-${Date.now()}`,
-        ...formData,
-        price: parseFloat(formData.price),
-        specifications_uz: JSON.parse(formData.specifications_uz),
-        specifications_ru: JSON.parse(formData.specifications_ru),
-        created_at: editingProduct?.created_at || new Date().toISOString(),
-      };
+      JSON.parse(formData.specifications_uz);
+      JSON.parse(formData.specifications_ru);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Invalid JSON in specifications',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value) {
+          formDataToSend.append(key, value);
+        }
+      });
 
       if (editingProduct) {
-        setProducts(products.map((p) => (p.id === editingProduct.id ? newProduct : p)));
-        toast({
-          title: "Success",
-          description: "Product updated successfully",
+        await api.put(`${API_URL}${editingProduct.id}/`, formDataToSend, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
+        toast({ title: 'Success', description: 'Product updated successfully' });
       } else {
-        setProducts([newProduct, ...products]);
-        toast({
-          title: "Success",
-          description: "Product created successfully",
+        await api.post(API_URL, formDataToSend, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
+        toast({ title: 'Success', description: 'Product created successfully' });
       }
 
       handleCloseDialog();
-    } catch (error) {
+      fetchProducts();
+    } catch (err) {
+      console.error(err);
       toast({
-        title: "Error",
-        description: "Invalid JSON in specifications",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save product',
+        variant: 'destructive',
       });
     }
   };
 
-  const handleDelete = (productId) => {
+  const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      setProducts(products.filter((p) => p.id !== productId));
-      toast({
-        title: "Success",
-        description: "Product deleted successfully",
-      });
+      try {
+        await api.delete(`${API_URL}${productId}/`);
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
+        toast({ title: 'Deleted', description: 'Product removed successfully' });
+      } catch (err) {
+        console.error(err);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete product',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -171,139 +210,125 @@ const ProductsManagement = () => {
           />
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product, index) => (
-            <Card
-              key={product.id}
-              className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-105 backdrop-blur-sm group"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <CardContent className="p-0">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <img
-                    src={product.image_url}
-                    alt={product.name_uz}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleView(product)}
-                      className="bg-gray-900/90 hover:bg-gray-800 text-white"
-                    >
-                      <Eye size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleOpenDialog(product)}
-                      className="bg-blue-600/90 hover:bg-blue-700 text-white"
-                    >
-                      <Edit size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(product.id)}
-                      className="bg-red-600/90 hover:bg-red-700"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
+        {/* Product List */}
+        {loading ? (
+          <p className="text-gray-500 text-center py-10">Loading products...</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map((product) => (
+              <Card
+                key={product.id}
+                className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-105 backdrop-blur-sm group"
+              >
+                <CardContent className="p-0">
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={product.image || product.image_url || ''}
+                      alt={product.name_uz}
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <Button size="sm" onClick={() => handleView(product)} className="bg-gray-900/90 text-white">
+                        <Eye size={16} />
+                      </Button>
+                      <Button size="sm" onClick={() => handleOpenDialog(product)} className="bg-blue-600 text-white">
+                        <Edit size={16} />
+                      </Button>
+                      <Button size="sm" onClick={() => handleDelete(product.id)} className="bg-red-600 text-white">
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-100 line-clamp-1">
-                      {product.name_uz}
-                    </h3>
-                    <span className="text-green-400 font-bold text-lg ml-2">
-                      ${product.price.toLocaleString()}
-                    </span>
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-gray-100 mb-2">{product.name_uz}</h3>
+                    <p className="text-gray-400 text-sm line-clamp-2">{product.description}</p>
+                    <div className="flex justify-between items-center mt-3">
+                      <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-1 rounded-full">
+                        {product.category_uz}
+                      </span>
+                      <span className="text-green-400 font-bold text-sm">${product.price}</span>
+                    </div>
                   </div>
-                  <p className="text-gray-400 text-sm mb-2 line-clamp-2">{product.description_uz}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-1 rounded-full">
-                      {product.category_uz}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {new Date(product.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No products found</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
-        {/* Create/Edit Dialog */}
+        {/* View Dialog */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+          <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-2xl">
+            {viewingProduct && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold">{viewingProduct.name_uz}</DialogTitle>
+                </DialogHeader>
+                <img
+                  src={viewingProduct.image || viewingProduct.image_url || ''}
+                  alt={viewingProduct.name_uz}
+                  className="w-full h-64 object-cover rounded-lg mb-4"
+                />
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-gray-400 text-sm mb-1">Description</p>
+                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm">
+                      {viewingProduct.category_uz}
+                    </span>
+                    <span className="text-green-400 font-bold text-lg">${viewingProduct.price}</span>
+                  </div>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                {editingProduct ? 'Edit Product' : 'Add New Product'}
+                {editingProduct ? 'Edit Product' : 'Add Product'}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Names */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name_uz">Name (Uzbek)</Label>
-                  <Input
-                    id="name_uz"
-                    value={formData.name_uz}
-                    onChange={(e) => setFormData({ ...formData, name_uz: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name_ru">Name (Russian)</Label>
-                  <Input
-                    id="name_ru"
-                    value={formData.name_ru}
-                    onChange={(e) => setFormData({ ...formData, name_ru: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
+                {['name_uz', 'name_ru'].map((key) => (
+                  <div className="space-y-2" key={key}>
+                    <Label>{getLabel(key)}</Label>
+                    <Input
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100"
+                      required
+                    />
+                  </div>
+                ))}
               </div>
 
+              {/* Categories */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category_uz">Category (Uzbek)</Label>
-                  <Input
-                    id="category_uz"
-                    value={formData.category_uz}
-                    onChange={(e) => setFormData({ ...formData, category_uz: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="category_ru">Category (Russian)</Label>
-                  <Input
-                    id="category_ru"
-                    value={formData.category_ru}
-                    onChange={(e) => setFormData({ ...formData, category_ru: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
+                {['category_uz', 'category_ru'].map((key) => (
+                  <div className="space-y-2" key={key}>
+                    <Label>{getLabel(key)}</Label>
+                    <Input
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100"
+                      required
+                    />
+                  </div>
+                ))}
               </div>
 
+              {/* Price & Image */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price ($)</Label>
+                  <Label>PRICE</Label>
                   <Input
-                    id="price"
-                    type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     className="bg-gray-800 border-gray-700 text-gray-100"
@@ -311,70 +336,52 @@ const ProductsManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="image_url">Image URL</Label>
+                  <Label>IMAGE</Label>
                   <Input
-                    id="image_url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                     className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
+                    required={!editingProduct}
                   />
+                  {(formData.image || editingProduct?.image || editingProduct?.image_url) && (
+                    <img
+                      src={
+                        formData.image
+                          ? URL.createObjectURL(formData.image)
+                          : editingProduct?.image || editingProduct?.image_url
+                      }
+                      alt="Preview"
+                      className="w-48 h-32 object-cover rounded-lg mt-2 border border-gray-700"
+                    />
+                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description_uz">Description (Uzbek)</Label>
+                <Label>DESCRIPTION</Label>
                 <Textarea
-                  id="description_uz"
-                  value={formData.description_uz}
-                  onChange={(e) => setFormData({ ...formData, description_uz: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-20"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description_ru">Description (Russian)</Label>
-                <Textarea
-                  id="description_ru"
-                  value={formData.description_ru}
-                  onChange={(e) => setFormData({ ...formData, description_ru: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-20"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="specifications_uz">Specifications (Uzbek) - JSON Format</Label>
-                <Textarea
-                  id="specifications_uz"
-                  value={formData.specifications_uz}
-                  onChange={(e) => setFormData({ ...formData, specifications_uz: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 font-mono text-sm min-h-24"
-                  placeholder='{"Key": "Value"}'
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="specifications_ru">Specifications (Russian) - JSON Format</Label>
-                <Textarea
-                  id="specifications_ru"
-                  value={formData.specifications_ru}
-                  onChange={(e) => setFormData({ ...formData, specifications_ru: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 font-mono text-sm min-h-24"
-                  placeholder='{"Key": "Value"}'
-                  required
-                />
-              </div>
+              {['specifications_uz', 'specifications_ru'].map((key) => (
+                <div className="space-y-2" key={key}>
+                  <Label>{getLabel(key)}</Label>
+                  <Textarea
+                    value={formData[key]}
+                    onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                    className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                    required
+                  />
+                </div>
+              ))}
 
               <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCloseDialog}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
-                >
+                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border-gray-700 text-gray-300 hover:bg-gray-800">
                   Cancel
                 </Button>
                 <Button
@@ -385,57 +392,6 @@ const ProductsManagement = () => {
                 </Button>
               </DialogFooter>
             </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* View Dialog */}
-        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-          <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-2xl">
-            {viewingProduct && (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold">{viewingProduct.name_uz}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <img
-                    src={viewingProduct.image_url}
-                    alt={viewingProduct.name_uz}
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-gray-400 text-sm">Category</p>
-                      <p className="text-gray-100">{viewingProduct.category_uz}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400 text-sm">Price</p>
-                      <p className="text-green-400 font-bold text-xl">
-                        ${viewingProduct.price.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">Description (UZ)</p>
-                    <p className="text-gray-100">{viewingProduct.description_uz}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">Description (RU)</p>
-                    <p className="text-gray-100">{viewingProduct.description_ru}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 text-sm mb-2">Specifications (UZ)</p>
-                    <div className="bg-gray-800 p-3 rounded-lg space-y-1">
-                      {Object.entries(viewingProduct.specifications_uz).map(([key, value]) => (
-                        <div key={key} className="flex justify-between">
-                          <span className="text-gray-400">{key}:</span>
-                          <span className="text-gray-100">{value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
           </DialogContent>
         </Dialog>
       </div>

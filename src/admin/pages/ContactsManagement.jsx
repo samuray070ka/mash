@@ -1,42 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
-import { mockContacts } from '../mockData';
-import { Search, Eye, Trash2, Mail, Phone, Building, Calendar, X } from 'lucide-react';
+import { Search, Eye, Trash2, Mail, Phone, Building, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import aPi from '../API'
+
+
+const API = 'https://tokenized.pythonanywhere.com/api/contact-forms/';
 
 const ContactsManagement = () => {
   const [contacts, setContacts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewingContact, setViewingContact] = useState(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // 🔹 Fetch contact data from API
   useEffect(() => {
-    setContacts(mockContacts);
+    const loadContacts = async () => {
+      try {
+        const res = await aPi.get(API);
+        setContacts(res.data);
+      } catch (error) {
+        console.error('Error loading contacts:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load contact submissions',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadContacts();
   }, []);
 
+  // 🔹 Search filter
   const filteredContacts = contacts.filter(
     (contact) =>
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.company?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // 🔹 View single contact
   const handleView = (contact) => {
     setViewingContact(contact);
     setIsViewDialogOpen(true);
   };
 
-  const handleDelete = (contactId) => {
+  // 🔹 Delete contact (API + UI)
+  const handleDelete = async (contactId) => {
     if (window.confirm('Are you sure you want to delete this contact submission?')) {
-      setContacts(contacts.filter((c) => c.id !== contactId));
-      toast({
-        title: "Success",
-        description: "Contact submission deleted successfully",
-      });
+      try {
+        await aPi.delete(`${API}${contactId}/`);
+        setContacts(contacts.filter((c) => c.id !== contactId));
+        toast({
+          title: 'Success',
+          description: 'Contact submission deleted successfully',
+        });
+      } catch (error) {
+        console.error('Error deleting contact:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete contact submission',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -50,6 +83,7 @@ const ContactsManagement = () => {
           <p className="text-gray-400">Manage customer inquiries and contact submissions</p>
         </div>
 
+        {/* Search bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
           <Input
@@ -60,83 +94,91 @@ const ContactsManagement = () => {
           />
         </div>
 
-        <div className="space-y-4">
-          {filteredContacts.map((contact, index) => (
-            <Card
-              key={contact.id}
-              className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 backdrop-blur-sm group"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-lg">
-                        {contact.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-100 group-hover:text-green-400 transition-colors">
-                          {contact.name}
-                        </h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
-                          <span className="flex items-center gap-1">
-                            <Mail size={14} />
-                            {contact.email}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Phone size={14} />
-                            {contact.phone}
-                          </span>
-                          {contact.company && (
-                            <span className="flex items-center gap-1">
-                              <Building size={14} />
-                              {contact.company}
-                            </span>
-                          )}
+        {/* Loading state */}
+        {loading ? (
+          <div className="text-center py-12 text-gray-400">Loading contacts...</div>
+        ) : filteredContacts.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">No contact submissions found</div>
+        ) : (
+          <div className="space-y-4">
+            {filteredContacts.map((contact, index) => (
+              <Card
+                key={contact.id}
+                className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 backdrop-blur-sm group"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-lg">
+                          {contact.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-100 group-hover:text-green-400 transition-colors">
+                            {contact.name}
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mt-1">
+                            {contact.email && (
+                              <span className="flex items-center gap-1">
+                                <Mail size={14} />
+                                {contact.email}
+                              </span>
+                            )}
+                            {contact.phone && (
+                              <span className="flex items-center gap-1">
+                                <Phone size={14} />
+                                {contact.phone}
+                              </span>
+                            )}
+                            {contact.company && (
+                              <span className="flex items-center gap-1">
+                                <Building size={14} />
+                                {contact.company}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      <div className="bg-gray-800/50 p-4 rounded-lg">
+                        <p className="text-gray-300 line-clamp-2">{contact.message}</p>
+                      </div>
+                      {contact.created_at && (
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <Calendar size={14} className="mr-2" />
+                          Submitted on{' '}
+                          {new Date(contact.created_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
+                      )}
                     </div>
-                    <div className="bg-gray-800/50 p-4 rounded-lg">
-                      <p className="text-gray-300 line-clamp-2">{contact.message}</p>
-                    </div>
-                    <div className="flex items-center text-gray-500 text-sm">
-                      <Calendar size={14} className="mr-2" />
-                      Submitted on {new Date(contact.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleView(contact)}
+                        className="bg-green-600/90 hover:bg-green-700 text-white"
+                      >
+                        <Eye size={16} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleDelete(contact.id)}
+                        className="bg-red-600/90 hover:bg-red-700"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-4">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleView(contact)}
-                      className="bg-green-600/90 hover:bg-green-700 text-white"
-                    >
-                      <Eye size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(contact.id)}
-                      className="bg-red-600/90 hover:bg-red-700"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredContacts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No contact submissions found</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
@@ -151,7 +193,7 @@ const ContactsManagement = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-2xl">
-                      {viewingContact.name.charAt(0).toUpperCase()}
+                      {viewingContact.name?.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-100">{viewingContact.name}</h3>
@@ -160,20 +202,24 @@ const ContactsManagement = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-800/50 p-4 rounded-lg">
-                      <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
-                        <Mail size={14} />
-                        Email
-                      </p>
-                      <p className="text-gray-100">{viewingContact.email}</p>
-                    </div>
-                    <div className="bg-gray-800/50 p-4 rounded-lg">
-                      <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
-                        <Phone size={14} />
-                        Phone
-                      </p>
-                      <p className="text-gray-100">{viewingContact.phone}</p>
-                    </div>
+                    {viewingContact.email && (
+                      <div className="bg-gray-800/50 p-4 rounded-lg">
+                        <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
+                          <Mail size={14} />
+                          Email
+                        </p>
+                        <p className="text-gray-100">{viewingContact.email}</p>
+                      </div>
+                    )}
+                    {viewingContact.phone && (
+                      <div className="bg-gray-800/50 p-4 rounded-lg">
+                        <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
+                          <Phone size={14} />
+                          Phone
+                        </p>
+                        <p className="text-gray-100">{viewingContact.phone}</p>
+                      </div>
+                    )}
                   </div>
 
                   {viewingContact.company && (
@@ -191,21 +237,23 @@ const ContactsManagement = () => {
                     <p className="text-gray-100">{viewingContact.message}</p>
                   </div>
 
-                  <div className="bg-gray-800/50 p-4 rounded-lg">
-                    <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
-                      <Calendar size={14} />
-                      Submission Date
-                    </p>
-                    <p className="text-gray-100">
-                      {new Date(viewingContact.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </p>
-                  </div>
+                  {viewingContact.created_at && (
+                    <div className="bg-gray-800/50 p-4 rounded-lg">
+                      <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
+                        <Calendar size={14} />
+                        Submission Date
+                      </p>
+                      <p className="text-gray-100">
+                        {new Date(viewingContact.created_at).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </>
             )}

@@ -5,7 +5,7 @@ import { Calendar, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = `https://tokenized.pythonanywhere.com/api`;
 
 const News = () => {
   const { language, t } = useLanguage();
@@ -18,7 +18,7 @@ const News = () => {
 
   const loadNews = async () => {
     try {
-      const response = await axios.get(`${API}/news`);
+      const response = await axios.get(`${API}/news/`);
       setNews(response.data);
     } catch (error) {
       console.error('Error loading news:', error);
@@ -76,7 +76,7 @@ const News = () => {
                 <div className="grid lg:grid-cols-2 gap-8">
                   <div className="relative h-96 lg:h-auto overflow-hidden">
                     <img
-                      src={news[0].image_url}
+                      src={news[0].image}
                       alt={language === 'uz' ? news[0].title_uz : news[0].title_ru}
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                     />
@@ -118,7 +118,7 @@ const News = () => {
                 >
                   <div className="relative h-56 overflow-hidden">
                     <img
-                      src={item.image_url}
+                      src={item.image}
                       alt={language === 'uz' ? item.title_uz : item.title_ru}
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                     />

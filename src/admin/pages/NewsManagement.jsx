@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
-import { mockNews } from '../mockData';
 import { Plus, Search, Edit, Trash2, Eye, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import aPi from '../API';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,8 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 
+const API_URL = "https://tokenized.pythonanywhere.com/api/news/";
+
 const NewsManagement = () => {
   const [news, setNews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,6 +25,8 @@ const NewsManagement = () => {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [editingNews, setEditingNews] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     title_uz: '',
     title_ru: '',
@@ -30,31 +34,49 @@ const NewsManagement = () => {
     content_ru: '',
     category_uz: '',
     category_ru: '',
-    image_url: '',
+    image: null, // 🟢 Fayl sifatida saqlanadi
   });
 
+  // 🟢 Fetch all news
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      const response = await aPi.get(API_URL);
+      setNews(response.data);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch news from the server.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setNews(mockNews);
+    fetchNews();
   }, []);
 
   const filteredNews = news.filter(
     (item) =>
-      item.title_uz.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.title_ru.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category_uz.toLowerCase().includes(searchTerm.toLowerCase())
+      item.title_uz?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.title_ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category_uz?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // 🟢 Open Create/Edit dialog
   const handleOpenDialog = (newsItem = null) => {
     if (newsItem) {
       setEditingNews(newsItem);
       setFormData({
-        title_uz: newsItem.title_uz,
-        title_ru: newsItem.title_ru,
-        content_uz: newsItem.content_uz,
-        content_ru: newsItem.content_ru,
-        category_uz: newsItem.category_uz,
-        category_ru: newsItem.category_ru,
-        image_url: newsItem.image_url,
+        title_uz: newsItem.title_uz || '',
+        title_ru: newsItem.title_ru || '',
+        content_uz: newsItem.content_uz || '',
+        content_ru: newsItem.content_ru || '',
+        category_uz: newsItem.category_uz || '',
+        category_ru: newsItem.category_ru || '',
+        image: null, // 🟢 tahrirda eski rasm ko‘rsatiladi, yangi yuklanganda o‘rniga qo‘yiladi
       });
     } else {
       setEditingNews(null);
@@ -65,7 +87,7 @@ const NewsManagement = () => {
         content_ru: '',
         category_uz: '',
         category_ru: '',
-        image_url: '',
+        image: null,
       });
     }
     setIsDialogOpen(true);
@@ -76,66 +98,76 @@ const NewsManagement = () => {
     setEditingNews(null);
   };
 
-  const handleSubmit = (e) => {
+  // 🟢 Create or Update news
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newNews = {
-      id: editingNews?.id || `news-${Date.now()}`,
-      ...formData,
-      date: editingNews?.date || new Date().toISOString(),
-    };
+    try {
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value) data.append(key, value);
+      });
 
-    if (editingNews) {
-      setNews(news.map((n) => (n.id === editingNews.id ? newNews : n)));
-      toast({
-        title: "Success",
-        description: "News updated successfully",
-      });
-    } else {
-      setNews([newNews, ...news]);
-      toast({
-        title: "Success",
-        description: "News created successfully",
-      });
+      if (editingNews) {
+        await aPi.put(`${API_URL}${editingNews.id}/`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        toast({ title: "Success", description: "News updated successfully" });
+      } else {
+        await aPi.post(API_URL, data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        toast({ title: "Success", description: "News created successfully" });
+      }
+
+      fetchNews();
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Error saving news:", error);
+      toast({ title: "Error", description: "Failed to save news." });
     }
-
-    handleCloseDialog();
   };
 
-  const handleDelete = (newsId) => {
+  // 🟢 Delete news
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this news?')) {
-      setNews(news.filter((n) => n.id !== newsId));
-      toast({
-        title: "Success",
-        description: "News deleted successfully",
-      });
+      try {
+        await aPi.delete(`${API_URL}${id}/`);
+        setNews(news.filter((n) => n.id !== id));
+        toast({ title: "Success", description: "News deleted successfully" });
+      } catch (error) {
+        console.error("Error deleting news:", error);
+        toast({ title: "Error", description: "Failed to delete news." });
+      }
     }
   };
 
-  const handleView = (newsItem) => {
-    setViewingNews(newsItem);
+  const handleView = (item) => {
+    setViewingNews(item);
     setIsViewDialogOpen(true);
   };
 
   return (
     <AdminLayout>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex items-center justify-between">
+        {/* Header */}
+      <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mt-8 md:mt-0 mb-2">
               News Management
             </h1>
             <p className="text-gray-400">Manage your factory news and updates</p>
           </div>
           <Button
             onClick={() => handleOpenDialog()}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20 absolute top-5 right-5 md:static"
           >
             <Plus className="mr-2" size={20} />
             Add News
           </Button>
         </div>
 
+        {/* 🔍 Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
           <Input
@@ -146,78 +178,62 @@ const NewsManagement = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredNews.map((newsItem, index) => (
-            <Card
-              key={newsItem.id}
-              className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-[1.02] backdrop-blur-sm group"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <CardContent className="p-0">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <img
-                    src={newsItem.image_url}
-                    alt={newsItem.title_uz}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleView(newsItem)}
-                      className="bg-gray-900/90 hover:bg-gray-800 text-white"
-                    >
-                      <Eye size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleOpenDialog(newsItem)}
-                      className="bg-purple-600/90 hover:bg-purple-700 text-white"
-                    >
-                      <Edit size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(newsItem.id)}
-                      className="bg-red-600/90 hover:bg-red-700"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
+        {/* 📰 News List */}
+        {loading ? (
+          <p className="text-gray-500 text-center py-10">Loading news...</p>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {filteredNews.map((item, index) => (
+              <Card
+                key={item.id}
+                className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-[1.02] backdrop-blur-sm group"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <CardContent className="p-0">
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={item.image || item.image_url}
+                      alt={item.title_uz}
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <Button size="sm" variant="secondary" onClick={() => handleView(item)} className="bg-gray-900/90 hover:bg-gray-800 text-white">
+                        <Eye size={16} />
+                      </Button>
+                      <Button size="sm" variant="secondary" onClick={() => handleOpenDialog(item)} className="bg-purple-600/90 hover:bg-purple-700 text-white">
+                        <Edit size={16} />
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => handleDelete(item.id)} className="bg-red-600/90 hover:bg-red-700">
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+                    <div className="absolute bottom-2 left-2">
+                      <span className="bg-purple-600/90 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+                        {item.category_uz}
+                      </span>
+                    </div>
                   </div>
-                  <div className="absolute bottom-2 left-2">
-                    <span className="bg-purple-600/90 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
-                      {newsItem.category_uz}
-                    </span>
+                  <div className="p-5">
+                    <h3 className="text-xl font-semibold text-gray-100 mb-2 line-clamp-2 group-hover:text-purple-400 transition-colors">
+                      {item.title_uz}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{item.content_uz}</p>
+                    <div className="flex items-center text-gray-500 text-sm">
+                      <Calendar size={14} className="mr-2" />
+                      {new Date(item.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </div>
                   </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-semibold text-gray-100 mb-2 line-clamp-2 group-hover:text-purple-400 transition-colors">
-                    {newsItem.title_uz}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">{newsItem.content_uz}</p>
-                  <div className="flex items-center text-gray-500 text-sm">
-                    <Calendar size={14} className="mr-2" />
-                    {new Date(newsItem.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredNews.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No news found</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
-        {/* Create/Edit Dialog */}
+        {/* 🟢 Create/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -225,68 +241,63 @@ const NewsManagement = () => {
                 {editingNews ? 'Edit News' : 'Add New News'}
               </DialogTitle>
             </DialogHeader>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title_uz">Title (Uzbek)</Label>
-                  <Input
-                    id="title_uz"
-                    value={formData.title_uz}
-                    onChange={(e) => setFormData({ ...formData, title_uz: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="title_ru">Title (Russian)</Label>
-                  <Input
-                    id="title_ru"
-                    value={formData.title_ru}
-                    onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
+                {["title_uz", "title_ru"].map((key) => (
+                  <div className="space-y-2" key={key}>
+                    <Label>{key.replace("_", " ").toUpperCase()}</Label>
+                    <Input
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100"
+                      required
+                    />
+                  </div>
+                ))}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category_uz">Category (Uzbek)</Label>
-                  <Input
-                    id="category_uz"
-                    value={formData.category_uz}
-                    onChange={(e) => setFormData({ ...formData, category_uz: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="category_ru">Category (Russian)</Label>
-                  <Input
-                    id="category_ru"
-                    value={formData.category_ru}
-                    onChange={(e) => setFormData({ ...formData, category_ru: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
+                {["category_uz", "category_ru"].map((key) => (
+                  <div className="space-y-2" key={key}>
+                    <Label>{key.replace("_", " ").toUpperCase()}</Label>
+                    <Input
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100"
+                      required
+                    />
+                  </div>
+                ))}
               </div>
 
+              {/* 🟢 Image Upload */}
               <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
+                <Label>Image</Label>
                 <Input
-                  id="image_url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                   className="bg-gray-800 border-gray-700 text-gray-100"
-                  required
+                  required={!editingNews}
                 />
+                {/* 🟢 Preview selected image */}
+                {(formData.image || editingNews?.image) && (
+                  <img
+                    src={
+                      formData.image
+                        ? URL.createObjectURL(formData.image)
+                        : editingNews?.image || editingNews?.image_url
+                    }
+                    alt="Preview"
+                    className="w-48 h-32 object-cover rounded-lg mt-2 border border-gray-700"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content_uz">Content (Uzbek)</Label>
+                <Label>Content (UZ)</Label>
                 <Textarea
-                  id="content_uz"
                   value={formData.content_uz}
                   onChange={(e) => setFormData({ ...formData, content_uz: e.target.value })}
                   className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
@@ -295,9 +306,8 @@ const NewsManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content_ru">Content (Russian)</Label>
+                <Label>Content (RU)</Label>
                 <Textarea
-                  id="content_ru"
                   value={formData.content_ru}
                   onChange={(e) => setFormData({ ...formData, content_ru: e.target.value })}
                   className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
@@ -306,12 +316,7 @@ const NewsManagement = () => {
               </div>
 
               <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCloseDialog}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
-                >
+                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border-gray-700 text-gray-300 hover:bg-gray-800">
                   Cancel
                 </Button>
                 <Button
@@ -325,7 +330,7 @@ const NewsManagement = () => {
           </DialogContent>
         </Dialog>
 
-        {/* View Dialog */}
+        {/* 🟢 View Dialog */}
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-2xl max-h-[90vh] overflow-y-auto">
             {viewingNews && (
@@ -335,7 +340,7 @@ const NewsManagement = () => {
                 </DialogHeader>
                 <div className="space-y-4">
                   <img
-                    src={viewingNews.image_url}
+                    src={viewingNews.image || viewingNews.image_url}
                     alt={viewingNews.title_uz}
                     className="w-full h-64 object-cover rounded-lg"
                   />
@@ -345,7 +350,7 @@ const NewsManagement = () => {
                     </span>
                     <span className="text-gray-500 text-sm flex items-center gap-2">
                       <Calendar size={14} />
-                      {new Date(viewingNews.date).toLocaleDateString()}
+                      {new Date(viewingNews.created_at).toLocaleDateString()}
                     </span>
                   </div>
                   <div>

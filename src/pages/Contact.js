@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = `https://tokenized.pythonanywhere.com/api`;
 
 const Contact = () => {
   const { language, t } = useLanguage();
@@ -25,7 +25,7 @@ const Contact = () => {
 
   const loadCompanyInfo = async () => {
     try {
-      const response = await axios.get(`${API}/company-info`);
+      const response = await axios.get(`${API}/company-info/`);
       setCompanyInfo(response.data);
     } catch (error) {
       console.error('Error loading company info:', error);
@@ -44,7 +44,7 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      await axios.post(`${API}/contact`, formData);
+      await axios.post(`${API}/contact-forms/`, formData);
       toast.success(
         language === 'uz'
           ? 'Xabar yuborildi! Tez orada siz bilan bog\'lanamiz.'

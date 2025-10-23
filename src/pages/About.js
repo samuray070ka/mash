@@ -4,7 +4,7 @@ import { Building2, Target, Eye, Users } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = `https://tokenized.pythonanywhere.com/api`;
 
 const About = () => {
   const { language, t } = useLanguage();
@@ -17,7 +17,7 @@ const About = () => {
 
   const loadCompanyInfo = async () => {
     try {
-      const response = await axios.get(`${API}/company-info`);
+      const response = await axios.get(`${API}/company-info/`);
       setCompanyInfo(response.data);
     } catch (error) {
       console.error('Error loading company info:', error);

@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Menu, X } from 'lucide-react';
 import { Instagram, Facebook, Youtube, Send } from 'lucide-react';
+import { AiOutlineUser } from "react-icons/ai";
 import Carousel from './carusel';
 
 const Layout = () => {
@@ -97,6 +98,18 @@ const Layout = () => {
                 {language === 'uz' ? 'RU' : 'UZ'}
               </button>
 
+               <button className='relative bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300 rounded-full text-lg p-2 lg:p-3 group cursor-pointer animate-nav_logo2'>
+                <Link to={'/login'}>
+                  <AiOutlineUser />
+
+                <div
+                  className="absolute hidden group-hover:block bg-white text-black text-sm rounded-lg px-3 py-1 shadow-md transition-all duration-300 ease-out top-10 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-10 lg:bottom-auto lg:top-10"
+                >
+                  Profil
+                </div>
+                </Link>
+              </button>
+
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 data-testid="mobile-menu-toggle"
@@ -136,13 +149,12 @@ const Layout = () => {
 
       <Carousel/>
 
-      {/* Footer */}
-      {/* Footer */}
+          {/* Footer */}
       <footer className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">NamanganMash</h3>
+              <h3 className="text-xl font-bold mb-4">TechFactory</h3>
               <p className="text-gray-300 text-sm">
                 {t(
                   'Yuqori sifatli sanoat uskunalari ishlab chiqaruvchisi',
@@ -187,36 +199,58 @@ const Layout = () => {
 
             </div>
 
-            <div>
-              <h4 className="text-lg font-semibold mb-4">{t('Tezkor havolalar', 'Быстрые ссылки')}</h4>
-              <ul className="space-y-2 text-sm">
-                {navLinks.map((link) => (
-                  <li key={link.path} className="relative pl-0 group transition-all">
-                    <Link
-                      to={link.path}
-                      className="text-gray-300 group-hover:text-white transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                    
-                  </li>
-                ))}
-              </ul>
+<div>
+  <h4 className="text-lg font-semibold mb-4">
+    {t('Tezkor havolalar', 'Быстрые ссылки')}
+  </h4>
+  <ul className="space-y-3 text-sm">
+    {navLinks.map((link) => (
+      <li key={link.path} className="relative block transition-all">
+        <Link
+          to={link.path}
+          className="relative inline-block group text-gray-300 group-hover:text-white transition-colors duration-300"
+        >
+          {link.label}
 
-            </div>
+          {/* Chiziq + doira */}
+          <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-0.5 w-0
+            bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full
+            overflow-hidden transition-all duration-500 group-hover:w-full">
 
+            {/* Harakatlanayotgan doira */}
+            <span className="absolute top-1/2 left-0 w-2 h-2 bg-white rounded-full animate-dot"></span>
+          </span>
+        </Link>
+      </li>
+    ))}
+  </ul>
+
+  {/* 🔽 Custom animatsiya style */}
+  <style>
+    {`
+      .animate-dot {
+          animation: dotMove 2s ease-in-out infinite;
+        }
+      @keyframes dotMove {
+        0% { transform: translateX(0) translateY(-50%); }
+        50% { transform: translateX(100%) translateY(-50%); }
+        100% { transform: translateX(0) translateY(-50%); }
+      }
+    `}
+  </style>
+</div>
             <div>
               <h4 className="text-lg font-semibold mb-4">{t('Aloqa', 'Контакты')}</h4>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>+998 71 234-56-78</li>
-                <li>info@namanganmash.uz</li>
-                <li>@namanganmash.uz</li>
+                <li>info@techfactory.uz</li>
+                <li>@techfactory_uz</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 NamanganMash. {t('Barcha huquqlar himoyalangan', 'Все права защищены')}.</p>
+            <p>&copy; 2025 TechFactory. {t('Barcha huquqlar himoyalangan', 'Все права защищены')}.</p>
           </div>
         </div>
       </footer>

@@ -5,7 +5,7 @@ import { ArrowLeft, CheckCircle } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = `https://tokenized.pythonanywhere.com/api`;
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -19,7 +19,7 @@ const ProductDetail = () => {
 
   const loadProduct = async () => {
     try {
-      const response = await axios.get(`${API}/products/${id}`);
+      const response = await axios.get(`${API}/products/${id}/`);
       setProduct(response.data);
     } catch (error) {
       console.error('Error loading product:', error);
@@ -71,7 +71,7 @@ const ProductDetail = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl blur-3xl opacity-20"></div>
             <img
-              src={product.image_url}
+              src={product.image}
               alt={language === 'uz' ? product.name_uz : product.name_ru}
               className="relative w-full h-auto rounded-3xl shadow-2xl"
             />

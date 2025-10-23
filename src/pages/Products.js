@@ -5,7 +5,7 @@ import { Search, Filter, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = `https://tokenized.pythonanywhere.com/api`;
 
 const Products = () => {
   const { language, t } = useLanguage();
@@ -26,7 +26,7 @@ const Products = () => {
 
   const loadProducts = async () => {
     try {
-      const response = await axios.get(`${API}/products`);
+      const response = await axios.get(`${API}/products/`);
       setProducts(response.data);
 
       // Extract unique categories
@@ -43,14 +43,14 @@ const Products = () => {
     let filtered = [...products];
 
     // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(product => {
-        const name = language === 'uz' ? product.name_uz : product.name_ru;
-        const description = language === 'uz' ? product.description_uz : product.description_ru;
-        return name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               description.toLowerCase().includes(searchTerm.toLowerCase());
-      });
-    }
+    // if (searchTerm) {
+    //   filtered = filtered.filter(product => {
+    //     const name = language === 'uz' ? product.name_uz : product.name_ru;
+    //     const description = language === 'uz' ? product.description_uz : product.description_ru;
+    //     return name.toLowerCase() ||
+    //            description.toLowerCase();
+    //   });
+    // }
 
     // Filter by category
     if (selectedCategory !== 'all') {
@@ -145,7 +145,7 @@ const Products = () => {
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src={product.image_url}
+                  src={product.image}
                   alt={language === 'uz' ? product.name_uz : product.name_ru}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />

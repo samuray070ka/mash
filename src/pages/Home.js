@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as THREE from 'three';
 import AOS from "aos";
 import "aos/dist/aos.css";
+import video from "../components/assets/k.mp4"
 
 // Backend URL
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -243,8 +244,23 @@ const Home = () => {
     <div className="min-h-screen" data-testid="home-page">
       {/* Hero Section */}
      <section className=" relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-        <div className="bg-blue-500/60 animate-hero_animated backdrop-blur-sm backdrop-saturate-100 backdrop-brightness-75 shadow-md shadow-blue-50 p-20 z-10 text-center rounded-[25px] sm:px-6 lg:px-8">
+
+      <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+  >
+    <source src={video} type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+        {/* <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" /> */}
+        <div className=" animate-hero_animated backdrop-blur-sm backdrop-saturate-100 backdrop-brightness-75 shadow-sm shadow-blue-50 p-20 z-10 text-center rounded-[25px] sm:px-6 lg:px-8">
           <h1 className={`text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight transition-transform duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             {t('Sanoat kelajagini', "Будущее промышленности")}
             <br />

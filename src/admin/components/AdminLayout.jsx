@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import "../../index.css"
+import Img from './image-removebg-preview.png'
 import {
   LayoutDashboard,
   Package,
@@ -14,7 +16,7 @@ import {
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAdminAuth();
@@ -49,13 +51,13 @@ const AdminLayout = ({ children }) => {
                   sidebarOpen ? 'opacity-100' : 'opacity-0 w-0'
                 }`}
               >
-                Factory Admin
+                Namangan Mash
               </h1>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="p-2 hover:bg-gray-800 rounded-lg transition-all duration-200"
               >
-                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                {sidebarOpen ? <X size={20} /> : <img src={Img}/>}
               </button>
             </div>
           </div>
@@ -112,18 +114,20 @@ const AdminLayout = ({ children }) => {
               </div>
             </div>
             <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-900/20 text-red-400 hover:text-red-300 transition-all duration-200"
-            >
-              <LogOut size={20} />
-              <span
-                className={`transition-all duration-300 ${
-                  sidebarOpen ? 'opacity-100' : 'opacity-0 w-0'
-                }`}
-              >
-                Logout
-              </span>
-            </button>
+  onClick={handleLogout}
+  className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-red-900/20 text-red-400 hover:text-red-300 transition-all duration-200"
+>
+  <LogOut style={{ width: "32px", height: "32px" }} className="text-2xl" /> {/* ← bu joy asosiy */}
+  <span
+    className={`transition-all duration-300 ${
+      sidebarOpen ? 'opacity-100' : 'opacity-0 w-0'
+    }`}
+  >
+    Logout
+  </span>
+</button>
+
+
           </div>
         </div>
       </aside>
