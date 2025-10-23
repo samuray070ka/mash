@@ -4,6 +4,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { ArrowRight, Award, Users, Globe, TrendingUp } from 'lucide-react';
 import axios from 'axios';
 import * as THREE from 'three';
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 // Backend URL
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -196,12 +198,53 @@ const Home = () => {
     }
   ];
 
+  const sectionRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setVisible(entry.isIntersecting);
+      },
+      { threshold: 0.4 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) observer.unobserve(sectionRef.current);
+    };
+  }, []);
+
+  const sectionRef2 = useRef(null);
+  const [visible2, setVisible2] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setVisible2(entry.isIntersecting); // har safar ishlaydi
+      },
+      { threshold: 0.4 }
+    );
+
+    if (sectionRef2.current) {
+      observer.observe(sectionRef2.current);
+    }
+
+    return () => {
+      if (sectionRef2.current) observer.unobserve(sectionRef2.current);
+    };
+  }, []);
   return (
     <div className="min-h-screen" data-testid="home-page">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+     <section className=" relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-        <div className="bg-blue-500/60 backdrop-blur-sm backdrop-saturate-100 backdrop-brightness-75 shadow-md shadow-blue-50 p-20 z-10 text-center rounded-[25px] sm:px-6 lg:px-8">
+        <div className="bg-blue-500/60 animate-hero_animated backdrop-blur-sm backdrop-saturate-100 backdrop-brightness-75 shadow-md shadow-blue-50 p-20 z-10 text-center rounded-[25px] sm:px-6 lg:px-8">
           <h1 className={`text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight transition-transform duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             {t('Sanoat kelajagini', "Будущее промышленности")}
             <br />
@@ -226,15 +269,24 @@ const Home = () => {
 
       {/* Stats Section */}
       <section className="py-16 backdrop-blur-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <CounterCard label={t('Yillik tajriba', 'Лет опыта')} value={10} />
-            <CounterCard label={t('Xodimlar', 'Сотрудников')} value={500} />
-            <CounterCard label={t('Mahsulotlar', 'Продуктов')} value={700} />
-            <CounterCard label={t('Mamlakatlar', 'Стран')} value={15} />
+        <div ref={sectionRef} className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 max-sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className={`fade-up ${visible ? "show" : ""}`}>
+              <CounterCard label="Yillik tajriba" value={10} />
+            </div>
+            <div className={`fade-up ${visible ? "show" : ""}`} style={{ animationDelay: "0.2s" }}>
+              <CounterCard label="Xodimlar" value={500} />
+            </div>
+            <div className={`fade-up ${visible ? "show" : ""}`} style={{ animationDelay: "0.4s" }}>
+              <CounterCard label="Mahsulotlar" value={700} />
+            </div>
+            <div className={`fade-up ${visible ? "show" : ""}`} style={{ animationDelay: "0.6s" }}>
+              <CounterCard label="Mamlakatlar" value={15} />
+            </div>
           </div>
         </div>
       </section>
+
 
       {/* Features Section */}
       <section className="py-20 bg-[#4545DA] relative overflow-hidden">
@@ -247,15 +299,17 @@ const Home = () => {
               {t('Bizning afzalliklarimiz va muvaffaqiyat kalitlari', 'Наши преимущества и ключи к успеху')}
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          {/* Animation uchun ref */}
+          <div ref={sectionRef2} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group relative p-8 bg-gradient-to-br from-blue-800/20 to-indigo-900/20 backdrop-blur-xl border border-blue-400/30 rounded-3xl overflow-hidden
-                       hover:from-blue-600/30 hover:to-indigo-700/30 hover:border-blue-300/50
-                       transform hover:-translate-y-2 hover:rotate-1 hover:scale-105
-                       transition-all duration-500 ease-out
-                       shadow-[0_10px_30px_rgba(59,130,246,0.2)] hover:shadow-[0_20px_50px_rgba(99,102,241,0.4)]"
+                className={`fade-zoom-up ${visible2 ? "show" : ""} group relative p-8 bg-gradient-to-br from-blue-800/20 to-indigo-900/20 backdrop-blur-xl border border-blue-400/30 rounded-3xl overflow-hidden
+                     hover:from-blue-600/30 hover:to-indigo-700/30 hover:border-blue-300/50
+                     transform hover:-translate-y-2 hover:rotate-1 hover:scale-105
+                     transition-all duration-500 ease-out
+                     shadow-[0_10px_30px_rgba(59,130,246,0.2)] hover:shadow-[0_20px_50px_rgba(99,102,241,0.4)]`}
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 <div className="relative mb-6 z-10">

@@ -45,6 +45,7 @@ code {
         --chart-5: 27 87% 67%;
         --radius: 0.5rem;
     }
+
     .dark {
         --background: 0 0% 3.9%;
         --foreground: 0 0% 98%;
@@ -77,6 +78,7 @@ code {
     * {
         @apply border-border;
     }
+
     body {
         @apply bg-background text-foreground;
     }
@@ -87,7 +89,7 @@ code {
         display: contents !important;
     }
 
-    [data-debug-wrapper="true"] > * {
+    [data-debug-wrapper="true"]>* {
         margin-left: inherit;
         margin-right: inherit;
         margin-top: inherit;
@@ -111,5 +113,113 @@ code {
         border-right-color: inherit;
         border-top-color: inherit;
         border-bottom-color: inherit;
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-up.show {
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeZoomUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.fade-zoom-up {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-zoom-up.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation: fadeZoomUp 0.8s ease-out forwards;
+}
+.animate-hero_animated{
+    animation: hero .8s ease-in;
+}
+
+@keyframes hero {
+    from{
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.animate-nav_logo{
+    animation: logo .8s ease-in;
+}
+
+@keyframes logo {
+    from{
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.animate-nav_logo2{
+    animation: logo2 .8s ease-in;
+}
+
+@keyframes logo2 {
+    from{
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.animate-nav_center{
+    animation: center .8s ease-in;
+}
+
+@keyframes center {
+    from{
+        opacity: 0;
+        transform: translateY(-100px);
+        animation-delay: .3s;
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
     }
 }

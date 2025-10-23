@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Menu, X } from 'lucide-react';
+import { Instagram, Facebook, Youtube, Send } from 'lucide-react';
+import Carousel from './carusel';
 
 const Layout = () => {
   const { language, toggleLanguage, t } = useLanguage();
@@ -31,9 +33,9 @@ const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50" id='navbar'>
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50">
       {/* Header */}
-      <header
+    <header
         className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-500
           ${isScrolled
             ? "bg-white/60 backdrop-blur-lg backdrop-saturate-150 backdrop-brightness-75 shadow-md shadow-blue-50"
@@ -43,12 +45,12 @@ const Layout = () => {
            sm:bg-white/60 sm:backdrop-blur-lg sm:backdrop-saturate-150 sm:backdrop-brightness-100 sm:shadow-md sm:shadow-blue-50
         `}
       >
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8 bg-transparent">
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8 ">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link
               to="/"
-              className="flex items-center space-x-3 group"
+              className="flex animate-nav_logo items-center space-x-3 group"
               data-testid="logo-link"
             >
               <div className="relative">
@@ -68,7 +70,7 @@ const Layout = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
+            <div className="hidden lg:flex animate-nav_center items-center space-x-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -90,7 +92,7 @@ const Layout = () => {
               <button
                 onClick={toggleLanguage}
                 data-testid="language-toggle-btn"
-                className="px-4 py-2 rounded-lg font-semibold text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300"
+                className="px-4 py-2 animate-nav_logo2 rounded-lg font-semibold text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300"
               >
                 {language === 'uz' ? 'RU' : 'UZ'}
               </button>
@@ -113,10 +115,10 @@ const Layout = () => {
                   key={link.path}
                   to={link.path}
                   data-testid={`mobile-nav-link-${link.path}`}
-                  className={`block px-4 py-3 rounded-lg font-medium transition-all duration-300 mb-2 ${
+                  className={`block px-4 animate-nav_logo2 py-3 rounded-lg font-medium transition-all duration-300 mb-2 ${
                     location.pathname === link.path
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                      : 'bg-white/50 text-gray-700 hover:bg-white'
+                      : 'bg-white text-gray-700 hover:bg-white'
                   }`}
                 >
                   {link.label}
@@ -131,62 +133,90 @@ const Layout = () => {
       <main className="pt-20">
         <Outlet />
       </main>
-      <div className="w-full bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 p-6  shadow-2xl">
-  <h3 className="text-white text-xl font-bold mb-4 text-center">📍 TechFactory - Namangan</h3>
-  
-  <div className="relative w-full h-80 rounded-xl overflow-hidden">
-    {/* 100% ISHLAYDI - ZOOM + SURISH */}
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d4863.198!2d71.6436!3d41.0058!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzIwLjgiTiA3McKwMzgnMzcuMiJF!5e0!3m2!1suz!2suz!4v1630000000000"
-      width="100%"
-      height="100%"
-      style={{ border: 0 }}
-      allowFullScreen=""
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-      className="absolute inset-0 rounded-xl"
-    />
-  </div>
-  
-  
-</div>
+
+      <Carousel/>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white ">
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">TechFactory</h3>
+              <h3 className="text-xl font-bold mb-4">NamanganMash</h3>
               <p className="text-gray-300 text-sm">
                 {t(
                   'Yuqori sifatli sanoat uskunalari ishlab chiqaruvchisi',
                   'Производитель высококачественного промышленного оборудования'
                 )}
               </p>
+          {/*  ijtimoiy tarmoqlar */}
+          <div className='mt-10'>
+            <p className="text-xl font-bold mb-4">
+          {t(
+            'Bizning ijtimoiy tarmoqlar',
+            'Наши социальные сети'
+          )}
+        </p>
+
+            <div className="flex  items-end space-x-6 mt-10">
+              {[
+                { nameUz: 'Instagram', nameRu: 'Инстаграм', icon: <Instagram className="w-6 h-6" />, color: 'hover:text-pink-500', bg: 'bg-pink-600' },
+                { nameUz: 'Facebook', nameRu: 'Фейсбук', icon: <Facebook className="w-6 h-6" />, color: 'hover:text-blue-500', bg: 'bg-blue-600' },
+                { nameUz: 'YouTube', nameRu: 'Ютуб', icon: <Youtube className="w-6 h-6" />, color: 'hover:text-red-500', bg: 'bg-red-600' },
+                { nameUz: 'Telegram', nameRu: 'Телеграм', icon: <Send className="w-6 h-6" />, color: 'hover:text-sky-400', bg: 'bg-sky-600' },
+              ].map((item) => (
+                <div key={item.nameUz} className="relative group">
+                  <span
+                    className={`absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-white px-2 py-1 rounded-md opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 group-hover:-translate-y-1 ${item.bg} transition-all duration-300 pointer-events-none`}
+                  >
+                    {t(item.nameUz, item.nameRu)}
+                  </span>
+                  <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`text-gray-400 transition-all duration-300 ${item.color}`}
+                  >
+                    {item.icon}
+                  </a>
+                </div>
+              ))}
             </div>
+          </div>
+          {/* ✅ /Yangi qo‘shildi */}
+
+            </div>
+
             <div>
               <h4 className="text-lg font-semibold mb-4">{t('Tezkor havolalar', 'Быстрые ссылки')}</h4>
               <ul className="space-y-2 text-sm">
                 {navLinks.map((link) => (
-                  <li key={link.path}>
-                    <Link to={link.path} className="text-gray-300 hover:text-white transition-colors">
+                  <li key={link.path} className="relative pl-0 group transition-all">
+                    <Link
+                      to={link.path}
+                      className="text-gray-300 group-hover:text-white transition-colors"
+                    >
                       {link.label}
                     </Link>
+                    
                   </li>
                 ))}
               </ul>
+
             </div>
+
             <div>
               <h4 className="text-lg font-semibold mb-4">{t('Aloqa', 'Контакты')}</h4>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>+998 71 234-56-78</li>
-                <li>info@techfactory.uz</li>
-                <li>@techfactory_uz</li>
+                <li>info@namanganmash.uz</li>
+                <li>@namanganmash.uz</li>
               </ul>
             </div>
           </div>
+
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 TechFactory. {t('Barcha huquqlar himoyalangan', 'Все права защищены')}.</p>
+            <p>&copy; 2025 NamanganMash. {t('Barcha huquqlar himoyalangan', 'Все права защищены')}.</p>
           </div>
         </div>
       </footer>
