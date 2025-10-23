@@ -34,11 +34,14 @@ const Layout = () => {
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50" id='navbar'>
       {/* Header */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-500 ${
-    isScrolled
-      ? "bg-white/60 backdrop-blur-lg backdrop-saturate-150 backdrop-brightness-75 shadow-md shadow-blue-50"
-      : "bg-transparent backdrop-blur-0"
-  }`}
+        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-500
+          ${isScrolled
+            ? "bg-white/60 backdrop-blur-lg backdrop-saturate-150 backdrop-brightness-75 shadow-md shadow-blue-50"
+            : "bg-transparent backdrop-blur-0"
+          }
+          max-sm:bg-white/60 max-sm:backdrop-blur-lg max-sm:backdrop-saturate-150 max-sm:backdrop-brightness-100 max-sm:shadow-md max-sm:shadow-blue-50
+           sm:bg-white/60 sm:backdrop-blur-lg sm:backdrop-saturate-150 sm:backdrop-brightness-100 sm:shadow-md sm:shadow-blue-50
+        `}
       >
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 bg-transparent">
           <div className="flex items-center justify-between h-20">
@@ -58,7 +61,7 @@ const Layout = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  TechFactory
+                  NamanganMash
                 </h1>
                 <p className="text-xs text-gray-500">{t('Sanoat uskunalari', 'Промышленное оборудование')}</p>
               </div>
