@@ -133,6 +133,7 @@ const ProductsManagement = () => {
         }
       });
 
+
       if (editingProduct) {
         await api.put(`${API_URL}${editingProduct.id}/`, formDataToSend, {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -186,16 +187,16 @@ const ProductsManagement = () => {
                <div className="relative flex items-center justify-between">
   <div>
     <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mt-12 md:mt-0 mb-2">
-      Products Management
+    Mahsulotlar boshqaruvi
     </h1>
-    <p className="text-gray-400">Manage your factory products</p>
+    <p className="text-gray-400">Zavod mahsulotlaringizni boshqaring</p>
   </div>
   <Button
     onClick={() => handleOpenDialog()}
     className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20 absolute top-[-10px] right-[-10px] md:static"
   >
     <Plus className="mr-2" size={20} />
-    Add Product
+    Mahsulot Qo'shish
   </Button>
 </div>
 
@@ -203,16 +204,17 @@ const ProductsManagement = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
           <Input
-            placeholder="Search products..."
+            placeholder="Mahsulotlarni Qidirish..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-gray-900/50 border-gray-800 text-gray-100 placeholder:text-gray-500"
           />
         </div>
 
+
         {/* Product List */}
         {loading ? (
-          <p className="text-gray-500 text-center py-10">Loading products...</p>
+          <p className="text-gray-500 text-center py-10">Mahsulotlarni yuklash...</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product) => (
@@ -270,7 +272,7 @@ const ProductsManagement = () => {
                 />
                 <div className="space-y-3">
                   <div>
-                    <p className="text-gray-400 text-sm mb-1">Description</p>
+                    <p className="text-gray-400 text-sm mb-1">Izoh</p>
                     <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description}</p>
                   </div>
                   <div className="flex items-center justify-between">
@@ -284,6 +286,7 @@ const ProductsManagement = () => {
             )}
           </DialogContent>
         </Dialog>
+
 
         {/* Add/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -327,7 +330,7 @@ const ProductsManagement = () => {
               {/* Price & Image */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>PRICE</Label>
+                  <Label>NARXI</Label>
                   <Input
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -336,7 +339,7 @@ const ProductsManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>IMAGE</Label>
+                  <Label>RASM</Label>
                   <Input
                     type="file"
                     accept="image/*"
@@ -359,7 +362,7 @@ const ProductsManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>DESCRIPTION</Label>
+                <Label>IZOH</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -368,15 +371,16 @@ const ProductsManagement = () => {
                 />
               </div>
 
+
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={handleCloseDialog} className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                  Cancel
+                  Bekor Qilish
                 </Button>
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
                 >
-                  {editingProduct ? 'Update' : 'Create'}
+                  {editingProduct ? 'Yangilamoq' : 'Yaratish'}
                 </Button>
               </DialogFooter>
             </form>

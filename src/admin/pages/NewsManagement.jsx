@@ -154,16 +154,16 @@ const NewsManagement = () => {
       <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mt-8 md:mt-0 mb-2">
-              News Management
+            Yangiliklar boshqaruvi
             </h1>
-            <p className="text-gray-400">Manage your factory news and updates</p>
+            <p className="text-gray-400">Zavod yangiliklari va yangilanishlarini boshqaring</p>
           </div>
           <Button
             onClick={() => handleOpenDialog()}
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20 absolute top-5 right-5 md:static"
           >
             <Plus className="mr-2" size={20} />
-            Add News
+            Yangilik qo'shish
           </Button>
         </div>
 
@@ -171,7 +171,7 @@ const NewsManagement = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
           <Input
-            placeholder="Search news..."
+            placeholder="Yangilikni qidirish..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-gray-900/50 border-gray-800 text-gray-100 placeholder:text-gray-500"
@@ -180,7 +180,7 @@ const NewsManagement = () => {
 
         {/* 📰 News List */}
         {loading ? (
-          <p className="text-gray-500 text-center py-10">Loading news...</p>
+          <p className="text-gray-500 text-center py-10">Yangiliklar Yuklanmoqda...</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredNews.map((item, index) => (
@@ -214,6 +214,7 @@ const NewsManagement = () => {
                     </div>
                   </div>
                   <div className="p-5">
+
                     <h3 className="text-xl font-semibold text-gray-100 mb-2 line-clamp-2 group-hover:text-purple-400 transition-colors">
                       {item.title_uz}
                     </h3>
@@ -304,6 +305,7 @@ const NewsManagement = () => {
                   required
                 />
               </div>
+
 
               <div className="space-y-2">
                 <Label>Content (RU)</Label>

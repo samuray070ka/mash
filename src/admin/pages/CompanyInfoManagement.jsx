@@ -86,9 +86,9 @@ const CompanyInfoManagement = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-2">
-              Company Information
+            Kompaniya ma'lumotlari
             </h1>
-            <p className="text-gray-400">Update your factory's company details</p>
+            <p className="text-gray-400">Zavodingizning kompaniya ma'lumotlarini yangilang</p>
           </div>
           <Button
             onClick={handleSubmit}
@@ -98,12 +98,12 @@ const CompanyInfoManagement = () => {
             {isSaving ? (
               <span className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Saving...
+                Saqlanmoqda...
               </span>
             ) : (
               <span className="flex items-center gap-2">
                 <Save size={20} />
-                Save Changes
+                O'zgarishlarni Saqlash
               </span>
             )}
           </Button>
@@ -116,12 +116,12 @@ const CompanyInfoManagement = () => {
             <CardHeader>
               <CardTitle className="text-gray-100 flex items-center gap-2">
                 <Building2 size={20} className="text-orange-500" />
-                About Company
+                Kompaniya Haqida
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="about_uz" className="text-white" >About (Uzbek)</Label>
+                <Label htmlFor="about_uz" className="text-white" >Haqida (Uzbek)</Label>
                 <Textarea
                   id="about_uz"
                   value={formData.about_uz || ""}
@@ -130,7 +130,7 @@ const CompanyInfoManagement = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="about_ru" className="text-white" >About (Russian)</Label>
+                <Label htmlFor="about_ru" className="text-white" >Haqida (Russian)</Label>
                 <Textarea
                   id="about_ru"
                   value={formData.about_ru || ""}
@@ -146,12 +146,12 @@ const CompanyInfoManagement = () => {
             <CardHeader>
               <CardTitle className="text-gray-100 flex items-center gap-2">
                 <CalendarIcon size={20} className="text-orange-500" />
-                History
+                Tarixi
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="history_uz" className="text-white"  >History (Uzbek)</Label>
+                <Label htmlFor="history_uz" className="text-white"  >Tarixi (Uzbek)</Label>
                 <Textarea
                   id="history_uz"
                   value={formData.history_uz || ""}
@@ -160,7 +160,7 @@ const CompanyInfoManagement = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="history_ru" className="text-white" >History (Russian)</Label>
+                <Label htmlFor="history_ru" className="text-white" >Tarixi (Russian)</Label>
                 <Textarea
                   id="history_ru"
                   value={formData.history_ru || ""}
@@ -175,16 +175,16 @@ const CompanyInfoManagement = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-gray-100">Mission</CardTitle>
+                <CardTitle className="text-gray-100">Maqsad</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Label className="text-white" >Mission (Uzbek)</Label>
+                <Label className="text-white" >Maqsad (Uzbek)</Label>
                 <Textarea
                   value={formData.mission_uz || ""}
                   onChange={(e) => handleChange('mission_uz', e.target.value)}
                   className="bg-gray-800 border-gray-700 text-gray-100"
                 />
-                <Label className="text-white "  >Mission (Russian)</Label>
+                <Label className="text-white "  >Maqsad (Russian)</Label>
                 <Textarea
                   value={formData.mission_ru || ""}
                   onChange={(e) => handleChange('mission_ru', e.target.value)}
@@ -195,16 +195,16 @@ const CompanyInfoManagement = () => {
 
             <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-gray-100">Vision</CardTitle>
+                <CardTitle className="text-gray-100">Maqsad ko'rinishi</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Label className="text-white " >Vision (Uzbek)</Label>
+                <Label className="text-white " >Maqsad ko'rinishi (Uzbek)</Label>
                 <Textarea
                   value={formData.vision_uz || ""}
                   onChange={(e) => handleChange('vision_uz', e.target.value)}
                   className="bg-gray-800 border-gray-700 text-gray-100"
                 />
-                <Label className="text-white " >Vision (Russian)</Label>
+                <Label className="text-white " >Maqsad ko'rinishi (Russian)</Label>
                 <Textarea
                   value={formData.vision_ru || ""}
                   onChange={(e) => handleChange('vision_ru', e.target.value)}
@@ -219,13 +219,13 @@ const CompanyInfoManagement = () => {
             <CardHeader>
               <CardTitle className="text-gray-100 flex items-center gap-2">
                 <MapPin size={20} className="text-orange-500" />
-                Contact Information
+                Aloqa Ma'lumotlari
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-white " >Phone</Label>
+                  <Label className="text-white " >Telefon raqam</Label>
                   <Input
                     value={formData.phone || ""}
                     onChange={(e) => handleChange('phone', e.target.value)}
@@ -233,7 +233,7 @@ const CompanyInfoManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-white " >Email</Label>
+                  <Label className="text-white " >Email manzili</Label>
                   <Input
                     type="email"
                     value={formData.email || ""}
@@ -250,14 +250,14 @@ const CompanyInfoManagement = () => {
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
 
-              <Label className="text-white " >Address (Uzbek)</Label>
+              <Label className="text-white " >Manzil (Uzbek)</Label>
               <Input
                 value={formData.address_uz || ""}
                 onChange={(e) => handleChange('address_uz', e.target.value)}
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
 
-              <Label className="text-white " >Address (Russian)</Label>
+              <Label className="text-white " >Manzil (Russian)</Label>
               <Input
                 value={formData.address_ru || ""}
                 onChange={(e) => handleChange('address_ru', e.target.value)}
@@ -266,7 +266,7 @@ const CompanyInfoManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-white " >Latitude</Label>
+                  <Label className="text-white " >Kenglik</Label>
                   <Input
                     type="number"
                     step="any"
@@ -276,7 +276,7 @@ const CompanyInfoManagement = () => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white " >Longitude</Label>
+                  <Label className="text-white " >Uzunlik</Label>
                   <Input
                     type="number"
                     step="any"
@@ -294,12 +294,12 @@ const CompanyInfoManagement = () => {
             <CardHeader>
               <CardTitle className="text-gray-100 flex items-center gap-2">
                 <Users size={20} className="text-orange-500" />
-                Company Statistics
+                Kompaniya statistikasi
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-white " >Number of Employees</Label>
+                <Label className="text-white " >Xodimlar soni</Label>
                 <Input
                   type="number"
                   value={formData.employees_count || ""}
@@ -308,7 +308,7 @@ const CompanyInfoManagement = () => {
                 />
               </div>
               <div>
-                <Label className="text-white  " >Established Year</Label>
+                <Label className="text-white  " >Tashkil etilgan yil</Label>
                 <Input
                   type="number"
                   value={formData.established_year || ""}

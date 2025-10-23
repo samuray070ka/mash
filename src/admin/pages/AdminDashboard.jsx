@@ -58,7 +58,7 @@ const AdminDashboard = () => {
 
   const statCards = [
     {
-      title: 'Total Products',
+      title: 'Barcha Mahsulotlar',
       value: stats.totalProducts,
       change: '+12%',
       trend: 'up',
@@ -66,7 +66,7 @@ const AdminDashboard = () => {
       color: 'from-blue-500 to-cyan-500'
     },
     {
-      title: 'Total News',
+      title: 'Barcha Yangiliklar',
       value: stats.totalNews,
       change: '+8%',
       trend: 'up',
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
       color: 'from-purple-500 to-pink-500'
     },
     {
-      title: 'Contact Forms',
+      title: 'Aloqa shakllari',
       value: stats.totalContacts,
       change: '+23%',
       trend: 'up',
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
       color: 'from-green-500 to-emerald-500'
     },
     {
-      title: 'New This Month',
+      title: 'Bu oy yangiliklari',
       value: stats.newContactsThisMonth,
       change: '-5%',
       trend: 'down',
@@ -97,9 +97,9 @@ const AdminDashboard = () => {
         {/* Header */}
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-            Dashboard
+            Boshqaruv paneli
           </h1>
-          <p className="text-gray-400">Welcome back! Here's what's happening today.</p>
+          <p className="text-gray-400">Xush kelibsiz! Bugun nima sodir bo'layotgani haqida.</p>
         </div>
 
         {/* Stats Grid */}
@@ -130,7 +130,7 @@ const AdminDashboard = () => {
                         >
                           {stat.change}
                         </span>
-                        <span className="text-gray-500 text-sm">vs last month</span>
+                        <span className="text-gray-500 text-sm">o'tgan oyga nisbatan</span>
                       </div>
                     </div>
                     <div
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle className="text-gray-100 flex items-center gap-2">
                 <Package size={20} className="text-blue-500" />
-                Recent Products
+                So'nggi mahsulotlar
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -187,7 +187,7 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle className="text-gray-100 flex items-center gap-2">
                 <Newspaper size={20} className="text-purple-500" />
-                Recent News
+                So'ngi Yangiliklar
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
           <CardHeader>
             <CardTitle className="text-gray-100 flex items-center gap-2">
               <MessageSquare size={20} className="text-green-500" />
-              Recent Contact Submissions
+              So'nggi aloqa yuborishlari
             </CardTitle>
           </CardHeader>
          <CardContent>
