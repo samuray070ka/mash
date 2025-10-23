@@ -1,20 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../components/AdminLayout';
-import { mockStats, mockProducts, mockNews, mockContacts } from '../mockData';
+import api from '../API';
 import { Package, Newspaper, MessageSquare, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState(mockStats);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalNews: 0,
+    totalContacts: 0,
+    newContactsThisMonth: 0,
+  });
   const [recentProducts, setRecentProducts] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
   const [recentContacts, setRecentContacts] = useState([]);
 
   useEffect(() => {
-    // Load mock data
-    setRecentProducts(mockProducts.slice(0, 3));
-    setRecentNews(mockNews.slice(0, 3));
-    setRecentContacts(mockContacts.slice(0, 3));
+    // Fetch stats
+    api.get('https://tokenized.pythonanywhere.com/api/statistics/')
+      .then((res) => {
+        setStats(res.data);
+      })
+      .catch((err) => {
+        console.error('Error fetching stats:', err);
+      });
+
+    // Fetch recent products (last 2)
+    api.get('https://tokenized.pythonanywhere.com/api/products/')
+      .then((res) => {
+        const latest = res.data.slice(-2).reverse();
+        setRecentProducts(latest);
+      })
+      .catch((err) => {
+        console.error('Error fetching products:', err);
+      });
+
+    // Fetch recent news (last 2)
+    api.get('https://tokenized.pythonanywhere.com/api/news/')
+      .then((res) => {
+        const latest = res.data.slice(-2).reverse();
+        setRecentNews(latest);
+      })
+      .catch((err) => {
+        console.error('Error fetching news:', err);
+      });
+
+    // Fetch recent contacts (last 2)
+    api.get('https://tokenized.pythonanywhere.com/api/contact-forms/')
+      .then((res) => {
+        const latest = res.data.slice(-2).reverse();
+        setRecentContacts(latest);
+      })
+      .catch((err) => {
+        console.error('Error fetching contacts:', err);
+      });
   }, []);
 
   const statCards = [
@@ -124,7 +163,7 @@ const AdminDashboard = () => {
                     className="flex items-center gap-4 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-200 group"
                   >
                     <img
-                      src={product.image_url}
+                      src={product.image_url || product.image}
                       alt={product.name_uz}
                       className="w-12 h-12 rounded-lg object-cover"
                     />
@@ -177,27 +216,41 @@ const AdminDashboard = () => {
               Recent Contact Submissions
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentContacts.map((contact) => (
-                <div
-                  key={contact.id}
-                  className="flex items-start justify-between p-4 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-200"
-                >
-                  <div className="flex-1">
-                    <p className="text-gray-100 font-medium">{contact.name}</p>
-                    <p className="text-gray-400 text-sm">{contact.email}</p>
-                    <p className="text-gray-500 text-sm mt-1 line-clamp-1">{contact.message}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs text-gray-500">
-                      {new Date(contact.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
+         <CardContent>
+          <div className="space-y-3">
+            {recentContacts.map((contact) => (
+              <div
+                key={contact.id}
+                className="flex flex-col sm:flex-row items-start justify-between p-4 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-200"
+              >
+                {/* Sana joyi — mobil ekranda tepada chiqadi */}
+                <div className="sm:order-2 w-full sm:w-auto text-right mb-2 sm:mb-0">
+                  <span className="text-xs sm:text-sm text-gray-500 block sm:inline">
+                    {new Date(contact.created_at).toLocaleDateString()}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
+
+                {/* Asosiy ma'lumotlar */}
+                <div className="flex-1 sm:order-1 min-w-0 overflow-hidden">
+                  {/* Name */}
+                  <p className="text-gray-100 font-medium truncate text-sm sm:text-base">
+                    {contact.name}
+                  </p>
+
+                  {/* Email */}
+                  <p className="text-gray-400 truncate text-xs sm:text-sm">
+                    {contact.email}
+                  </p>
+
+                  {/* Message */}
+                  <p className="text-gray-500 mt-1 line-clamp-2 text-xs sm:text-sm">
+                    {contact.message}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
         </Card>
       </div>
     </AdminLayout>

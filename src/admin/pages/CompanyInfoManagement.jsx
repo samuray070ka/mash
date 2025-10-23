@@ -121,7 +121,7 @@ const CompanyInfoManagement = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="about_uz">About (Uzbek)</Label>
+                <Label htmlFor="about_uz" className="text-white" >About (Uzbek)</Label>
                 <Textarea
                   id="about_uz"
                   value={formData.about_uz || ""}
@@ -130,7 +130,7 @@ const CompanyInfoManagement = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="about_ru">About (Russian)</Label>
+                <Label htmlFor="about_ru" className="text-white" >About (Russian)</Label>
                 <Textarea
                   id="about_ru"
                   value={formData.about_ru || ""}
@@ -151,7 +151,7 @@ const CompanyInfoManagement = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="history_uz">History (Uzbek)</Label>
+                <Label htmlFor="history_uz" className="text-white"  >History (Uzbek)</Label>
                 <Textarea
                   id="history_uz"
                   value={formData.history_uz || ""}
@@ -160,7 +160,7 @@ const CompanyInfoManagement = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="history_ru">History (Russian)</Label>
+                <Label htmlFor="history_ru" className="text-white" >History (Russian)</Label>
                 <Textarea
                   id="history_ru"
                   value={formData.history_ru || ""}
@@ -178,13 +178,13 @@ const CompanyInfoManagement = () => {
                 <CardTitle className="text-gray-100">Mission</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Label>Mission (Uzbek)</Label>
+                <Label className="text-white" >Mission (Uzbek)</Label>
                 <Textarea
                   value={formData.mission_uz || ""}
                   onChange={(e) => handleChange('mission_uz', e.target.value)}
                   className="bg-gray-800 border-gray-700 text-gray-100"
                 />
-                <Label>Mission (Russian)</Label>
+                <Label className="text-white "  >Mission (Russian)</Label>
                 <Textarea
                   value={formData.mission_ru || ""}
                   onChange={(e) => handleChange('mission_ru', e.target.value)}
@@ -198,13 +198,13 @@ const CompanyInfoManagement = () => {
                 <CardTitle className="text-gray-100">Vision</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Label>Vision (Uzbek)</Label>
+                <Label className="text-white " >Vision (Uzbek)</Label>
                 <Textarea
                   value={formData.vision_uz || ""}
                   onChange={(e) => handleChange('vision_uz', e.target.value)}
                   className="bg-gray-800 border-gray-700 text-gray-100"
                 />
-                <Label>Vision (Russian)</Label>
+                <Label className="text-white " >Vision (Russian)</Label>
                 <Textarea
                   value={formData.vision_ru || ""}
                   onChange={(e) => handleChange('vision_ru', e.target.value)}
@@ -225,7 +225,7 @@ const CompanyInfoManagement = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Phone</Label>
+                  <Label className="text-white " >Phone</Label>
                   <Input
                     value={formData.phone || ""}
                     onChange={(e) => handleChange('phone', e.target.value)}
@@ -233,7 +233,7 @@ const CompanyInfoManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email</Label>
+                  <Label className="text-white " >Email</Label>
                   <Input
                     type="email"
                     value={formData.email || ""}
@@ -243,21 +243,21 @@ const CompanyInfoManagement = () => {
                 </div>
               </div>
 
-              <Label>Telegram</Label>
+              <Label className="text-white " >Telegram</Label>
               <Input
                 value={formData.telegram || ""}
                 onChange={(e) => handleChange('telegram', e.target.value)}
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
 
-              <Label>Address (Uzbek)</Label>
+              <Label className="text-white " >Address (Uzbek)</Label>
               <Input
                 value={formData.address_uz || ""}
                 onChange={(e) => handleChange('address_uz', e.target.value)}
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
 
-              <Label>Address (Russian)</Label>
+              <Label className="text-white " >Address (Russian)</Label>
               <Input
                 value={formData.address_ru || ""}
                 onChange={(e) => handleChange('address_ru', e.target.value)}
@@ -266,7 +266,7 @@ const CompanyInfoManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Latitude</Label>
+                  <Label className="text-white " >Latitude</Label>
                   <Input
                     type="number"
                     step="any"
@@ -276,7 +276,7 @@ const CompanyInfoManagement = () => {
                   />
                 </div>
                 <div>
-                  <Label>Longitude</Label>
+                  <Label className="text-white " >Longitude</Label>
                   <Input
                     type="number"
                     step="any"
@@ -299,7 +299,7 @@ const CompanyInfoManagement = () => {
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Number of Employees</Label>
+                <Label className="text-white " >Number of Employees</Label>
                 <Input
                   type="number"
                   value={formData.employees_count || ""}
@@ -308,7 +308,7 @@ const CompanyInfoManagement = () => {
                 />
               </div>
               <div>
-                <Label>Established Year</Label>
+                <Label className="text-white  " >Established Year</Label>
                 <Input
                   type="number"
                   value={formData.established_year || ""}

@@ -39,29 +39,37 @@ const Products = () => {
     }
   };
 
-  const filterProducts = () => {
-    let filtered = [...products];
+ const filterProducts = () => {
+  let filtered = [...products];
 
-    // Filter by search term
-    // if (searchTerm) {
-    //   filtered = filtered.filter(product => {
-    //     const name = language === 'uz' ? product.name_uz : product.name_ru;
-    //     const description = language === 'uz' ? product.description_uz : product.description_ru;
-    //     return name.toLowerCase() ||
-    //            description.toLowerCase();
-    //   });
-    // }
+  // Filter by search term
+  if (searchTerm.trim() !== '') {
+    filtered = filtered.filter(product => {
+      const name =
+        (language === 'uz' ? product.name_uz : product.name_ru) || '';
+      const description =
+        (language === 'uz' ? product.description_uz : product.description_ru) || '';
+      const term = searchTerm.toLowerCase();
 
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => {
-        const category = language === 'uz' ? product.category_uz : product.category_ru;
-        return category === selectedCategory;
-      });
-    }
+      return (
+        name.toLowerCase().includes(term) ||
+        description.toLowerCase().includes(term)
+      );
+    });
+  }
 
-    setFilteredProducts(filtered);
-  };
+  // Filter by category
+  if (selectedCategory !== 'all') {
+    filtered = filtered.filter(product => {
+      const category =
+        (language === 'uz' ? product.category_uz : product.category_ru) || '';
+      return category === selectedCategory;
+    });
+  }
+
+  setFilteredProducts(filtered);
+};
+
 
   if (loading) {
     return (

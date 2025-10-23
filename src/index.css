@@ -226,3 +226,27 @@ code {
 .iconnn{
     font-size: 150px;
 }
+/* globals.css - EMAIL UCHUN YANGI */
+@layer utilities {
+    .responsive-truncate-email {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    
+    /* HAR BIR BREAKPOINT DA HARF KESISH */
+    @media (max-width: 500px) { .responsive-truncate-email { max-width: 22ch; } }
+    @media (max-width: 450px) { .responsive-truncate-email { max-width: 20ch; } }
+    @media (max-width: 400px) { .responsive-truncate-email { max-width: 18ch; } }
+    @media (max-width: 350px) { .responsive-truncate-email { max-width: 16ch; } }
+    @media (max-width: 320px) { .responsive-truncate-email { max-width: 14ch; } }
+    @media (max-width: 300px) { .responsive-truncate-email { max-width: 12ch; } }
+    @media (max-width: 280px) { .responsive-truncate-email { max-width: 10ch; } }
+    @media (max-width: 260px) { .responsive-truncate-email { max-width: 8ch; } }
+    @media (max-width: 240px) { .responsive-truncate-email { max-width: 6ch; } }
+    
+    /* Har doim ... ko'rsatish */
+    .responsive-truncate-email::after {
+      content: "...";
+    }
+  }

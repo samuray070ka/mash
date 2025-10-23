@@ -55,9 +55,9 @@ const AdminLayout = ({ children }) => {
               </h1>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 hover:bg-gray-800 rounded-lg transition-all duration-200"
+                className="p-0 hover:bg-gray-800 rounded-lg transition-all duration-200"
               >
-                {sidebarOpen ? <X size={20} /> : <img src={Img}/>}
+                {sidebarOpen ? <X size={20} /> : <img style={{height:"30px"}} src={Img}/>}
               </button>
             </div>
           </div>

@@ -102,82 +102,100 @@ const ContactsManagement = () => {
         ) : (
           <div className="space-y-4">
             {filteredContacts.map((contact, index) => (
-              <Card
-                key={contact.id}
-                className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 backdrop-blur-sm group"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-lg">
-                          {contact.name?.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-100 group-hover:text-green-400 transition-colors">
-                            {contact.name}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mt-1">
-                            {contact.email && (
-                              <span className="flex items-center gap-1">
-                                <Mail size={14} />
-                                {contact.email}
-                              </span>
-                            )}
-                            {contact.phone && (
-                              <span className="flex items-center gap-1">
-                                <Phone size={14} />
-                                {contact.phone}
-                              </span>
-                            )}
-                            {contact.company && (
-                              <span className="flex items-center gap-1">
-                                <Building size={14} />
-                                {contact.company}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-gray-800/50 p-4 rounded-lg">
-                        <p className="text-gray-300 line-clamp-2">{contact.message}</p>
-                      </div>
-                      {contact.created_at && (
-                        <div className="flex items-center text-gray-500 text-sm">
-                          <Calendar size={14} className="mr-2" />
-                          Submitted on{' '}
-                          {new Date(contact.created_at).toLocaleString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </div>
-                      )}
+            <Card
+            key={contact.id}
+            className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 backdrop-blur-sm group"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                
+                {/* Kontent qismi */}
+                <div className="flex-1 space-y-3 w-full">
+                  
+                  {/* Avatar va ma'lumotlar */}
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
+                      {contact.name?.charAt(0).toUpperCase()}
                     </div>
-                    <div className="flex gap-2 ml-4">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => handleView(contact)}
-                        className="bg-green-600/90 hover:bg-green-700 text-white"
-                      >
-                        <Eye size={16} />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDelete(contact.id)}
-                        className="bg-red-600/90 hover:bg-red-700"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-100 group-hover:text-green-400 transition-colors truncate">
+                        {contact.name}
+                      </h3>
+                      
+                      {/* Kontakt ma'lumotlari - responsive */}
+                      <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400 mt-1">
+                        {contact.email && (
+                          <span className="flex items-center gap-1 min-w-0 w-full sm:w-auto">
+                            <Mail size={12} className="sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                            {/* ❌ OLD: truncate-email */}
+                            {/* ✅ NEW: responsive-truncate-email */}
+                            <span className="responsive-truncate-email min-w-0 flex-1">
+                              {contact.email}
+                            </span>
+                          </span>
+                        )}
+                        {contact.phone && (
+                          <span className="flex items-center gap-1 min-w-0">
+                            <Phone size={12} className="sm:w-3.5 sm:h-3.5" />
+                            <span className="truncate">{contact.phone}</span>
+                          </span>
+                        )}
+                        {contact.company && (
+                          <span className="flex items-center gap-1 min-w-0">
+                            <Building size={12} className="sm:w-3.5 sm:h-3.5" />
+                            <span className="truncate">{contact.company}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+          
+                  {/* Xabar */}
+                  <div className="bg-gray-800/50 p-3 sm:p-4 rounded-lg">
+                    <p className="text-gray-300 line-clamp-2 text-sm">{contact.message}</p>
+                  </div>
+          
+                  {/* Sana */}
+                  {contact.created_at && (
+                    <div className="flex items-center text-gray-500 text-xs sm:text-sm">
+                      <Calendar size={12} className="mr-1.5 sm:mr-2 flex-shrink-0" />
+                      <span className="truncate">
+                        Submitted on{' '}
+                        {new Date(contact.created_at).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+          
+                {/* BUTTONLAR - HAR DOIM OXIRGI QATORDA */}
+                <div className="flex gap-2 justify-end sm:justify-start pt-2 sm:pt-0 w-full sm:w-auto flex-shrink-0">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => handleView(contact)}
+                    className="bg-green-600/90 hover:bg-green-700 text-white min-w-[36px] h-8"
+                  >
+                    <Eye size={14} />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(contact.id)}
+                    className="bg-red-600/90 hover:bg-red-700 min-w-[36px] h-8"
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
             ))}
           </div>
         )}

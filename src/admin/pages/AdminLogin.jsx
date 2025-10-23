@@ -47,9 +47,9 @@ const AdminLogin = () => {
               <Lock className="text-white" size={32} />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              Factory Admin
+              NamanganMash Admin
             </h1>
-            <p className="text-gray-400 mt-2">Sign in to manage your factory</p>
+            <p className="text-gray-400 mt-2">Zavod boshqaruvga kirish</p>
           </div>
 
           {/* Error Alert */}
@@ -64,14 +64,14 @@ const AdminLogin = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-gray-300">
-                Username
+                Foydalanuvchining nomi
               </Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors" size={20} />
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Enter username"
+                  placeholder="Ismingizni kiriting"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="pl-10 bg-gray-800/50 border-gray-700 focus:border-blue-500 text-gray-100 placeholder:text-gray-500 transition-all duration-200"
@@ -82,14 +82,14 @@ const AdminLogin = () => {
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-300">
-                Password
+                Foydalanuvchining paroli
               </Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors" size={20} />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter password"
+                  placeholder="Parolingizni kiriting"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 bg-gray-800/50 border-gray-700 focus:border-blue-500 text-gray-100 placeholder:text-gray-500 transition-all duration-200"
@@ -106,11 +106,11 @@ const AdminLogin = () => {
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Signing in...
+                  Tekshirilmoqda...
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-2">
-                  Sign In
+                  Ro'yxatdan o'tish
                   <ArrowRight size={20} />
                 </span>
               )}
@@ -118,16 +118,16 @@ const AdminLogin = () => {
           </form>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-900/10 border border-blue-900/30 rounded-xl">
+          {/* <div className="mt-6 p-4 bg-blue-900/10 border border-blue-900/30 rounded-xl">
             <p className="text-xs text-gray-400 text-center">
               <span className="font-semibold text-blue-400">Demo:</span> admin / admin123
             </p>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer */}
         <p className="text-center text-gray-500 text-sm mt-6">
-          © 2025 Factory Admin Panel. All rights reserved.
+          © 2025 NamanganMash Admin Panel
         </p>
       </div>
     </div>

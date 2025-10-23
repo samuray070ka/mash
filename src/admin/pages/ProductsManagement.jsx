@@ -183,21 +183,21 @@ const ProductsManagement = () => {
     <AdminLayout>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-              Products Management
-            </h1>
-            <p className="text-gray-400">Manage your factory products</p>
-          </div>
-          <Button
-            onClick={() => handleOpenDialog()}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20"
-          >
-            <Plus className="mr-2" size={20} />
-            Add Product
-          </Button>
-        </div>
+               <div className="relative flex items-center justify-between">
+  <div>
+    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mt-12 md:mt-0 mb-2">
+      Products Management
+    </h1>
+    <p className="text-gray-400">Manage your factory products</p>
+  </div>
+  <Button
+    onClick={() => handleOpenDialog()}
+    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20 absolute top-[-10px] right-[-10px] md:static"
+  >
+    <Plus className="mr-2" size={20} />
+    Add Product
+  </Button>
+</div>
 
         {/* Search */}
         <div className="relative">
@@ -367,18 +367,6 @@ const ProductsManagement = () => {
                   required
                 />
               </div>
-
-              {['specifications_uz', 'specifications_ru'].map((key) => (
-                <div className="space-y-2" key={key}>
-                  <Label>{getLabel(key)}</Label>
-                  <Textarea
-                    value={formData[key]}
-                    onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
-                    required
-                  />
-                </div>
-              ))}
 
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={handleCloseDialog} className="border-gray-700 text-gray-300 hover:bg-gray-800">
