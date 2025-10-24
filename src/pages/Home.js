@@ -6,7 +6,7 @@ import axios from 'axios';
 import * as THREE from 'three';
 import AOS from "aos";
 import "aos/dist/aos.css";
-import video from "../components/assets/k.mp4"
+import video from "../components/assets/k_3.mp4"
 
 // Backend URL
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
