@@ -11,7 +11,7 @@ export const useAdminAuth = () => {
   return context;
 };
 
-const TOKEN_URL = 'http://tokenized.pythonanywhere.com/api/token/';
+const TOKEN_URL = 'https://tokenized.pythonanywhere.com/api/token/';
 
 export const AdminAuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
