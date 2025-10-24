@@ -47,7 +47,7 @@ const CompanyInfoManagement = () => {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await aPi.put(API, formData);
+      await aPi.post(API, formData);
       toast({
         title: "Success",
         description: "Company information updated successfully",
