@@ -26,6 +26,7 @@ const ProductsManagement = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [viewingProduct, setViewingProduct] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name_uz: '',
     name_ru: '',
@@ -34,8 +35,8 @@ const ProductsManagement = () => {
     category_ru: '',
     price: '',
     image: null,
-    specifications_uz: '{}',
-    specifications_ru: '{}',
+    specification_uz: '',
+    specification_ru: '',
   });
 
   useEffect(() => {
@@ -50,8 +51,8 @@ const ProductsManagement = () => {
     } catch (err) {
       console.error(err);
       toast({
-        title: 'Error',
-        description: 'Failed to load products from server',
+        title: 'Xato',
+        description: 'Mahsulotlarni serverdan yuklashning uddasi chiqmadi',
         variant: 'destructive',
       });
     } finally {
@@ -68,10 +69,20 @@ const ProductsManagement = () => {
   );
 
   const getLabel = (key) => {
-    const base = key.replace(/_(uz|ru)$/, '');
+    const labels = {
+      name: 'Nomi',
+      category: 'Kategoriya',
+      specification: 'Texnik tavsif',
+      price: 'Narxi',
+      image: 'Rasm',
+      description: 'Tavsif',
+    };
+
+    const base = key.replace(/_(uz|ru)$/, ''); // masalan: name_uz -> name
     const langMatch = key.match(/_(uz|ru)$/);
     const lang = langMatch ? ` (${langMatch[1].toUpperCase()})` : '';
-    return base.replace(/_/g, ' ').toUpperCase() + lang;
+
+    return labels[base] ? labels[base] + lang : base.toUpperCase() + lang;
   };
 
   const handleOpenDialog = (product = null) => {
@@ -85,8 +96,8 @@ const ProductsManagement = () => {
         category_ru: product.category_ru || '',
         price: product.price || '',
         image: null,
-        specifications_uz: JSON.stringify(product.specifications_uz || {}, null, 2),
-        specifications_ru: JSON.stringify(product.specifications_ru || {}, null, 2),
+        specification_uz: formatSpecs(product.specifications_uz),
+        specification_ru: formatSpecs(product.specifications_ru),
       });
     } else {
       setEditingProduct(null);
@@ -98,11 +109,18 @@ const ProductsManagement = () => {
         category_ru: '',
         price: '',
         image: null,
-        specifications_uz: '{}',
-        specifications_ru: '{}',
+        specification_uz: '',
+        specification_ru: '',
       });
     }
     setIsDialogOpen(true);
+  };
+
+  const formatSpecs = (specs) => {
+    if (!specs || typeof specs !== 'object') return '';
+    return Object.entries(specs)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n');
   };
 
   const handleCloseDialog = () => {
@@ -114,36 +132,37 @@ const ProductsManagement = () => {
     e.preventDefault();
 
     try {
-      JSON.parse(formData.specifications_uz);
-      JSON.parse(formData.specifications_ru);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Invalid JSON in specifications',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
       const formDataToSend = new FormData();
+
       Object.entries(formData).forEach(([key, value]) => {
-        if (value) {
+        if (!value) return;
+
+        if (key === 'specification_uz' || key === 'specification_ru') {
+          const lines = value.split('\n').filter(Boolean);
+          const obj = {};
+          lines.forEach((line) => {
+            const [k, v] = line.split(':').map((s) => s.trim());
+            if (k && v) obj[k] = v;
+          });
+          formDataToSend.append(
+            key.replace('specification', 'specifications'),
+            JSON.stringify(obj)
+          );
+        } else {
           formDataToSend.append(key, value);
         }
       });
-
 
       if (editingProduct) {
         await api.put(`${API_URL}${editingProduct.id}/`, formDataToSend, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        toast({ title: 'Success', description: 'Product updated successfully' });
+        toast({ title: '✅ Muvaffaqiyat', description: 'Mahsulot muvaffaqiyatli yangilandi' });
       } else {
         await api.post(API_URL, formDataToSend, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        toast({ title: 'Success', description: 'Product created successfully' });
+        toast({ title: '✅ Muvaffaqiyat', description: 'Mahsulot muvaffaqiyatli qo‘shildi' });
       }
 
       handleCloseDialog();
@@ -151,24 +170,24 @@ const ProductsManagement = () => {
     } catch (err) {
       console.error(err);
       toast({
-        title: 'Error',
-        description: 'Failed to save product',
+        title: 'Xato',
+        description: 'Mahsulotni saqlashning uddasi chiqmadi',
         variant: 'destructive',
       });
     }
   };
 
   const handleDelete = async (productId) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
+    if (window.confirm('Siz ushbu mahsulotni o‘chirmoqchimisiz?')) {
       try {
         await api.delete(`${API_URL}${productId}/`);
         setProducts((prev) => prev.filter((p) => p.id !== productId));
-        toast({ title: 'Deleted', description: 'Product removed successfully' });
+        toast({ title: 'O‘chirildi', description: 'Mahsulot muvaffaqiyatli o‘chirildi' });
       } catch (err) {
         console.error(err);
         toast({
-          title: 'Error',
-          description: 'Failed to delete product',
+          title: 'Xato',
+          description: 'Mahsulotni o‘chirishning uddasi chiqmadi',
           variant: 'destructive',
         });
       }
@@ -184,37 +203,36 @@ const ProductsManagement = () => {
     <AdminLayout>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Header */}
-               <div className="relative flex items-center justify-between">
-  <div>
-    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mt-12 md:mt-0 mb-2">
-    Mahsulotlar boshqaruvi
-    </h1>
-    <p className="text-gray-400">Zavod mahsulotlaringizni boshqaring</p>
-  </div>
-  <Button
-    onClick={() => handleOpenDialog()}
-    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20 absolute top-[-10px] right-[-10px] md:static"
-  >
-    <Plus className="mr-2" size={20} />
-    Mahsulot Qo'shish
-  </Button>
-</div>
+        <div className="relative flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mt-12 md:mt-0 mb-2">
+              Mahsulotlarni Boshqarish
+            </h1>
+            <p className="text-gray-400">Fabrika mahsulotlarini boshqaring</p>
+          </div>
+          <Button
+            onClick={() => handleOpenDialog()}
+            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20 absolute top-[-10px] right-[-10px] md:static"
+          >
+            <Plus className="mr-2" size={20} />
+            Mahsulot Qo‘shish
+          </Button>
+        </div>
 
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
           <Input
-            placeholder="Mahsulotlarni Qidirish..."
+            placeholder="Mahsulotlarni qidirish..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-gray-900/50 border-gray-800 text-gray-100 placeholder:text-gray-500"
           />
         </div>
 
-
         {/* Product List */}
         {loading ? (
-          <p className="text-gray-500 text-center py-10">Mahsulotlarni yuklash...</p>
+          <p className="text-gray-500 text-center py-10">Mahsulotlar yuklanmoqda...</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product) => (
@@ -272,7 +290,7 @@ const ProductsManagement = () => {
                 />
                 <div className="space-y-3">
                   <div>
-                    <p className="text-gray-400 text-sm mb-1">Izoh</p>
+                    <p className="text-gray-400 text-sm mb-1">Tavsif</p>
                     <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description}</p>
                   </div>
                   <div className="flex items-center justify-between">
@@ -287,16 +305,16 @@ const ProductsManagement = () => {
           </DialogContent>
         </Dialog>
 
-
         {/* Add/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                {editingProduct ? 'Edit Product' : 'Add Product'}
+                {editingProduct ? 'Mahsulotni Tahrirlash' : 'Mahsulot Qo‘shish'}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+
               {/* Names */}
               <div className="grid grid-cols-2 gap-4">
                 {['name_uz', 'name_ru'].map((key) => (
@@ -327,10 +345,29 @@ const ProductsManagement = () => {
                 ))}
               </div>
 
+              {/* Specifications */}
+              <div className="grid grid-cols-2 gap-4">
+                {['specification_uz', 'specification_ru'].map((key) => (
+                  <div className="space-y-2" key={key}>
+                    <Label>{getLabel(key)}</Label>
+                    <Textarea
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100 min-h-28"
+                      placeholder={
+                        key.includes('_uz')
+                          ? 'Rangi: Qora\nOg‘irligi: 2kg'
+                          : 'Цвет: Чёрный\nВес: 2 кг'
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
               {/* Price & Image */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>NARXI</Label>
+                  <Label>{getLabel('price')}</Label>
                   <Input
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -339,7 +376,7 @@ const ProductsManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>RASM</Label>
+                  <Label>{getLabel('image')}</Label>
                   <Input
                     type="file"
                     accept="image/*"
@@ -361,8 +398,9 @@ const ProductsManagement = () => {
                 </div>
               </div>
 
+              {/* Description */}
               <div className="space-y-2">
-                <Label>IZOH</Label>
+                <Label>{getLabel('description')}</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -371,16 +409,20 @@ const ProductsManagement = () => {
                 />
               </div>
 
-
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                  Bekor Qilish
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCloseDialog}
+                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                >
+                  Bekor qilish
                 </Button>
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
                 >
-                  {editingProduct ? 'Yangilamoq' : 'Yaratish'}
+                  {editingProduct ? 'Yangilash' : 'Yaratish'}
                 </Button>
               </DialogFooter>
             </form>

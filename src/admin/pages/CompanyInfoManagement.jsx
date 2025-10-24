@@ -85,7 +85,7 @@ const CompanyInfoManagement = () => {
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mt-8 md:mt-0 mb-2">
             Kompaniya ma'lumotlari
             </h1>
             <p className="text-gray-400">Zavodingizning kompaniya ma'lumotlarini yangilang</p>
@@ -93,7 +93,7 @@ const CompanyInfoManagement = () => {
           <Button
             onClick={handleSubmit}
             disabled={isSaving}
-            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg shadow-orange-500/20"
+            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg shadow-orange-500/20 absolute top-[10px] right-[10px] md:static"
           >
             {isSaving ? (
               <span className="flex items-center gap-2">
