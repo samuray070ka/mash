@@ -31,8 +31,8 @@ const ProductsManagement = () => {
   const [formData, setFormData] = useState({
     name_uz: '',
     name_ru: '',
-    description_uz: '',
-    description_ru: '',
+    content_uz: '',
+    content_ru: '',
     category_uz: '',
     category_ru: '',
     price: '',
@@ -93,8 +93,8 @@ const ProductsManagement = () => {
       setFormData({
         name_uz: product.name_uz || '',
         name_ru: product.name_ru || '',
-        description_uz: product.description_uz || '',
-        description_ru: product.description_ru || '',
+        content_uz: product.content_uz || '',
+        content_ru: product.content_ru || '',
         category_uz: product.category_uz || '',
         category_ru: product.category_ru || '',
         price: product.price || '',
@@ -107,8 +107,8 @@ const ProductsManagement = () => {
       setFormData({
         name_uz: '',
         name_ru: '',
-        description_uz: '',
-        description_ru: '',
+        content_uz: '',
+        content_ru: '',
         category_uz: '',
         category_ru: '',
         price: '',
@@ -268,7 +268,7 @@ const ProductsManagement = () => {
                   </div>
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-100 mb-2">{product.name_uz}</h3>
-                    <p className="text-gray-400 text-sm line-clamp-2">{product.description_uz || product.description_ru}</p>
+                    <p className="text-gray-400 text-sm line-clamp-2">{product.content_uz || product.content_ru}</p>
                     <div className="flex justify-between items-center mt-3">
                       <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-1 rounded-full">
                         {product.category_uz}
@@ -296,14 +296,14 @@ const ProductsManagement = () => {
                   className="w-full h-64 object-cover rounded-lg mb-4"
                 />
                 <div className="space-y-3">
-                  {/* <div>
+                  <div>
                     <p className="text-gray-400 text-sm mb-1">Tavsif (UZ)</p>
-                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description_uz}</p>
+                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.content_uz}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Tavsif (RU)</p>
-                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description_ru}</p>
-                  </div> */}
+                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.content_ru}</p>
+                  </div>
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Texnik tavsif (UZ)</p>
                     <ul className="list-disc pl-5 text-gray-100">
@@ -426,7 +426,7 @@ const ProductsManagement = () => {
 
               {/* Descriptions */}
               <div className="grid grid-cols-2 gap-4">
-                {['description_uz', 'description_ru'].map((key) => (
+                {['content_uz', 'content_ru'].map((key) => (
                   <div className="space-y-2" key={key}>
                     <Label>{getLabel(key)}</Label>
                     <Textarea

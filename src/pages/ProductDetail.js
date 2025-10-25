@@ -94,7 +94,7 @@ const ProductDetail = () => {
                 </div>
               )}
               <p className="text-lg text-gray-600 leading-relaxed" data-testid="product-description">
-                {language === 'uz' ? product.description_uz : product.description_ru}
+                {language === 'uz' ? product.content_uz : product.content_ru}
               </p>
             </div>
 
