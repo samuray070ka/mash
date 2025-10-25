@@ -26,12 +26,13 @@ const ProductsManagement = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [viewingProduct, setViewingProduct] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state for form submission loading
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name_uz: '',
     name_ru: '',
-    description: '',
+    description_uz: '',
+    description_ru: '',
     category_uz: '',
     category_ru: '',
     price: '',
@@ -92,7 +93,8 @@ const ProductsManagement = () => {
       setFormData({
         name_uz: product.name_uz || '',
         name_ru: product.name_ru || '',
-        description: product.description || '',
+        description_uz: product.description_uz || '',
+        description_ru: product.description_ru || '',
         category_uz: product.category_uz || '',
         category_ru: product.category_ru || '',
         price: product.price || '',
@@ -105,7 +107,8 @@ const ProductsManagement = () => {
       setFormData({
         name_uz: '',
         name_ru: '',
-        description: '',
+        description_uz: '',
+        description_ru: '',
         category_uz: '',
         category_ru: '',
         price: '',
@@ -131,7 +134,7 @@ const ProductsManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Set loading state to true
+    setIsSubmitting(true);
 
     try {
       const formDataToSend = new FormData();
@@ -177,7 +180,7 @@ const ProductsManagement = () => {
         variant: 'destructive',
       });
     } finally {
-      setIsSubmitting(false); // Reset loading state
+      setIsSubmitting(false);
     }
   };
 
@@ -265,7 +268,7 @@ const ProductsManagement = () => {
                   </div>
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-100 mb-2">{product.name_uz}</h3>
-                    <p className="text-gray-400 text-sm line-clamp-2">{product.description}</p>
+                    <p className="text-gray-400 text-sm line-clamp-2">{product.description_uz || product.description_ru}</p>
                     <div className="flex justify-between items-center mt-3">
                       <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-1 rounded-full">
                         {product.category_uz}
@@ -293,9 +296,29 @@ const ProductsManagement = () => {
                   className="w-full h-64 object-cover rounded-lg mb-4"
                 />
                 <div className="space-y-3">
+                  {/* <div>
+                    <p className="text-gray-400 text-sm mb-1">Tavsif (UZ)</p>
+                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description_uz}</p>
+                  </div>
                   <div>
-                    <p className="text-gray-400 text-sm mb-1">Tavsif</p>
-                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description}</p>
+                    <p className="text-gray-400 text-sm mb-1">Tavsif (RU)</p>
+                    <p className="text-gray-100 whitespace-pre-line">{viewingProduct.description_ru}</p>
+                  </div> */}
+                  <div>
+                    <p className="text-gray-400 text-sm mb-1">Texnik tavsif (UZ)</p>
+                    <ul className="list-disc pl-5 text-gray-100">
+                      {Object.entries(viewingProduct.specifications_uz || {}).map(([key, value]) => (
+                        <li key={key}>{key}: {value}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-sm mb-1">Texnik tavsif (RU)</p>
+                    <ul className="list-disc pl-5 text-gray-100">
+                      {Object.entries(viewingProduct.specifications_ru || {}).map(([key, value]) => (
+                        <li key={key}>{key}: {value}</li>
+                      ))}
+                    </ul>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm">
@@ -401,15 +424,19 @@ const ProductsManagement = () => {
                 </div>
               </div>
 
-              {/* Description */}
-              <div className="space-y-2">
-                <Label>{getLabel('description')}</Label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
-                  required
-                />
+              {/* Descriptions */}
+              <div className="grid grid-cols-2 gap-4">
+                {['description_uz', 'description_ru'].map((key) => (
+                  <div className="space-y-2" key={key}>
+                    <Label>{getLabel(key)}</Label>
+                    <Textarea
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                      required
+                    />
+                  </div>
+                ))}
               </div>
 
               <DialogFooter>

@@ -64,7 +64,8 @@ const NewsManagement = () => {
     (item) =>
       item.title_uz?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.title_ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category_uz?.toLowerCase().includes(searchTerm.toLowerCase())
+      item.category_uz?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category_ru?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // 🟢 Open Create/Edit dialog
@@ -308,24 +309,25 @@ const NewsManagement = () => {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label>Matn (UZ)</Label>
-                <Textarea
-                  value={formData.content_uz}
-                  onChange={(e) => setFormData({ ...formData, content_uz: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Matn (RU)</Label>
-                <Textarea
-                  value={formData.content_ru}
-                  onChange={(e) => setFormData({ ...formData, content_ru: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Matn (UZ)</Label>
+                  <Textarea
+                    value={formData.content_uz}
+                    onChange={(e) => setFormData({ ...formData, content_uz: e.target.value })}
+                    className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Matn (RU)</Label>
+                  <Textarea
+                    value={formData.content_ru}
+                    onChange={(e) => setFormData({ ...formData, content_ru: e.target.value })}
+                    className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                    required
+                  />
+                </div>
               </div>
 
               <DialogFooter>
@@ -404,16 +406,20 @@ const NewsManagement = () => {
                     </span>
                   </div>
                   <div>
+                    <p className="text-gray-400 text-sm mb-1">Kategoriya (RU)</p>
+                    <p className="text-gray-100 font-semibold">{viewingNews.category_ru}</p>
+                  </div>
+                  <div>
                     <p className="text-gray-400 text-sm mb-1">Sarlavha (RU)</p>
                     <p className="text-gray-100 font-semibold">{viewingNews.title_ru}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Matn (UZ)</p>
-                    <p className="text-gray-100">{viewingNews.content_uz}</p>
+                    <p className="text-gray-100 whitespace-pre-line">{viewingNews.content_uz}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Matn (RU)</p>
-                    <p className="text-gray-100">{viewingNews.content_ru}</p>
+                    <p className="text-gray-100 whitespace-pre-line">{viewingNews.content_ru}</p>
                   </div>
                 </div>
               </>
