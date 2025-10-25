@@ -26,6 +26,7 @@ const NewsManagement = () => {
   const [editingNews, setEditingNews] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for form submission loading
 
   const [formData, setFormData] = useState({
     title_uz: '',
@@ -34,7 +35,7 @@ const NewsManagement = () => {
     content_ru: '',
     category_uz: '',
     category_ru: '',
-    image: null, // 🟢 Fayl sifatida saqlanadi
+    image: null,
   });
 
   // 🟢 Fetch all news
@@ -46,8 +47,9 @@ const NewsManagement = () => {
     } catch (error) {
       console.error("Error fetching news:", error);
       toast({
-        title: "Error",
-        description: "Failed to fetch news from the server.",
+        title: "Xato",
+        description: "Yangiliklarni serverdan yuklashning uddasi chiqmadi.",
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -76,7 +78,7 @@ const NewsManagement = () => {
         content_ru: newsItem.content_ru || '',
         category_uz: newsItem.category_uz || '',
         category_ru: newsItem.category_ru || '',
-        image: null, // 🟢 tahrirda eski rasm ko‘rsatiladi, yangi yuklanganda o‘rniga qo‘yiladi
+        image: null,
       });
     } else {
       setEditingNews(null);
@@ -101,6 +103,7 @@ const NewsManagement = () => {
   // 🟢 Create or Update news
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Set loading state to true
 
     try {
       const data = new FormData();
@@ -112,32 +115,42 @@ const NewsManagement = () => {
         await aPi.put(`${API_URL}${editingNews.id}/`, data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        toast({ title: "Success", description: "News updated successfully" });
+        toast({ title: "✅ Muvaffaqiyat", description: "Yangilik muvaffaqiyatli yangilandi" });
       } else {
         await aPi.post(API_URL, data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        toast({ title: "Success", description: "News created successfully" });
+        toast({ title: "✅ Muvaffaqiyat", description: "Yangilik muvaffaqiyatli qo‘shildi" });
       }
 
       fetchNews();
       handleCloseDialog();
     } catch (error) {
       console.error("Error saving news:", error);
-      toast({ title: "Error", description: "Failed to save news." });
+      toast({
+        title: "Xato",
+        description: "Yangilikni saqlashning uddasi chiqmadi.",
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false); // Reset loading state
     }
   };
 
   // 🟢 Delete news
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this news?')) {
+    if (window.confirm('Ushbu yangilikni o‘chirmoqchimisiz?')) {
       try {
         await aPi.delete(`${API_URL}${id}/`);
         setNews(news.filter((n) => n.id !== id));
-        toast({ title: "Success", description: "News deleted successfully" });
+        toast({ title: "O‘chirildi", description: "Yangilik muvaffaqiyatli o‘chirildi" });
       } catch (error) {
         console.error("Error deleting news:", error);
-        toast({ title: "Error", description: "Failed to delete news." });
+        toast({
+          title: "Xato",
+          description: "Yangilikni o‘chirishning uddasi chiqmadi.",
+          variant: 'destructive',
+        });
       }
     }
   };
@@ -151,10 +164,10 @@ const NewsManagement = () => {
     <AdminLayout>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Header */}
-      <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mt-8 md:mt-0 mb-2">
-            Yangiliklar boshqaruvi
+              Yangiliklar boshqaruvi
             </h1>
             <p className="text-gray-400">Zavod yangiliklari va yangilanishlarini boshqaring</p>
           </div>
@@ -214,14 +227,13 @@ const NewsManagement = () => {
                     </div>
                   </div>
                   <div className="p-5">
-
                     <h3 className="text-xl font-semibold text-gray-100 mb-2 line-clamp-2 group-hover:text-purple-400 transition-colors">
                       {item.title_uz}
                     </h3>
                     <p className="text-gray-400 text-sm mb-3 line-clamp-2">{item.content_uz}</p>
                     <div className="flex items-center text-gray-500 text-sm">
                       <Calendar size={14} className="mr-2" />
-                      {new Date(item.created_at).toLocaleDateString('en-US', {
+                      {new Date(item.created_at).toLocaleDateString('uz-UZ', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
@@ -239,7 +251,7 @@ const NewsManagement = () => {
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {editingNews ? 'Edit News' : 'Add New News'}
+                {editingNews ? 'Yangilikni Tahrirlash' : 'Yangilik Qo‘shish'}
               </DialogTitle>
             </DialogHeader>
 
@@ -247,7 +259,7 @@ const NewsManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 {["title_uz", "title_ru"].map((key) => (
                   <div className="space-y-2" key={key}>
-                    <Label>{key.replace("_", " ").toUpperCase()}</Label>
+                    <Label>{key.includes('_uz') ? 'Sarlavha (UZ)' : 'Sarlavha (RU)'}</Label>
                     <Input
                       value={formData[key]}
                       onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
@@ -261,7 +273,7 @@ const NewsManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 {["category_uz", "category_ru"].map((key) => (
                   <div className="space-y-2" key={key}>
-                    <Label>{key.replace("_", " ").toUpperCase()}</Label>
+                    <Label>{key.includes('_uz') ? 'Kategoriya (UZ)' : 'Kategoriya (RU)'}</Label>
                     <Input
                       value={formData[key]}
                       onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
@@ -274,7 +286,7 @@ const NewsManagement = () => {
 
               {/* 🟢 Image Upload */}
               <div className="space-y-2">
-                <Label>Image</Label>
+                <Label>Rasm</Label>
                 <Input
                   type="file"
                   accept="image/*"
@@ -297,7 +309,7 @@ const NewsManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Content (UZ)</Label>
+                <Label>Matn (UZ)</Label>
                 <Textarea
                   value={formData.content_uz}
                   onChange={(e) => setFormData({ ...formData, content_uz: e.target.value })}
@@ -306,9 +318,8 @@ const NewsManagement = () => {
                 />
               </div>
 
-
               <div className="space-y-2">
-                <Label>Content (RU)</Label>
+                <Label>Matn (RU)</Label>
                 <Textarea
                   value={formData.content_ru}
                   onChange={(e) => setFormData({ ...formData, content_ru: e.target.value })}
@@ -318,14 +329,47 @@ const NewsManagement = () => {
               </div>
 
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                  Cancel
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCloseDialog}
+                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  disabled={isSubmitting}
+                >
+                  Bekor qilish
                 </Button>
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  disabled={isSubmitting}
                 >
-                  {editingNews ? 'Update' : 'Create'}
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin mr-2 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      {editingNews ? 'Yangilanmoqda...' : 'Yaratilmoqda...'}
+                    </div>
+                  ) : (
+                    editingNews ? 'Yangilash' : 'Yaratish'
+                  )}
                 </Button>
               </DialogFooter>
             </form>
@@ -352,19 +396,23 @@ const NewsManagement = () => {
                     </span>
                     <span className="text-gray-500 text-sm flex items-center gap-2">
                       <Calendar size={14} />
-                      {new Date(viewingNews.created_at).toLocaleDateString()}
+                      {new Date(viewingNews.created_at).toLocaleDateString('uz-UZ', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
                     </span>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm mb-1">Title (RU)</p>
+                    <p className="text-gray-400 text-sm mb-1">Sarlavha (RU)</p>
                     <p className="text-gray-100 font-semibold">{viewingNews.title_ru}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm mb-1">Content (UZ)</p>
+                    <p className="text-gray-400 text-sm mb-1">Matn (UZ)</p>
                     <p className="text-gray-100">{viewingNews.content_uz}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm mb-1">Content (RU)</p>
+                    <p className="text-gray-400 text-sm mb-1">Matn (RU)</p>
                     <p className="text-gray-100">{viewingNews.content_ru}</p>
                   </div>
                 </div>

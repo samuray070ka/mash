@@ -26,6 +26,7 @@ const ProductsManagement = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [viewingProduct, setViewingProduct] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for form submission loading
 
   const [formData, setFormData] = useState({
     name_uz: '',
@@ -78,7 +79,7 @@ const ProductsManagement = () => {
       description: 'Tavsif',
     };
 
-    const base = key.replace(/_(uz|ru)$/, ''); // masalan: name_uz -> name
+    const base = key.replace(/_(uz|ru)$/, '');
     const langMatch = key.match(/_(uz|ru)$/);
     const lang = langMatch ? ` (${langMatch[1].toUpperCase()})` : '';
 
@@ -130,6 +131,7 @@ const ProductsManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Set loading state to true
 
     try {
       const formDataToSend = new FormData();
@@ -174,6 +176,8 @@ const ProductsManagement = () => {
         description: 'Mahsulotni saqlashning uddasi chiqmadi',
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false); // Reset loading state
     }
   };
 
@@ -314,7 +318,6 @@ const ProductsManagement = () => {
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-
               {/* Names */}
               <div className="grid grid-cols-2 gap-4">
                 {['name_uz', 'name_ru'].map((key) => (
@@ -415,14 +418,42 @@ const ProductsManagement = () => {
                   variant="outline"
                   onClick={handleCloseDialog}
                   className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  disabled={isSubmitting}
                 >
                   Bekor qilish
                 </Button>
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+                  disabled={isSubmitting}
                 >
-                  {editingProduct ? 'Yangilash' : 'Yaratish'}
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin mr-2 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      {editingProduct ? 'Yangilanmoqda...' : 'Yaratilmoqda...'}
+                    </div>
+                  ) : (
+                    editingProduct ? 'Yangilash' : 'Yaratish'
+                  )}
                 </Button>
               </DialogFooter>
             </form>
