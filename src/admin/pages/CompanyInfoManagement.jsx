@@ -223,7 +223,7 @@ const CompanyInfoManagement = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid  lg:grid-cols-2 sm:grid-cols-2 max-sm:grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Label className="text-white " >Telefon raqam</Label>
                   <Input
@@ -264,7 +264,7 @@ const CompanyInfoManagement = () => {
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid  lg:grid-cols-2 sm:grid-cols-2 max-sm:grid-cols-1 gap-4">
                 <div>
                   <Label className="text-white " >Kenglik</Label>
                   <Input
@@ -297,7 +297,7 @@ const CompanyInfoManagement = () => {
                 Kompaniya statistikasi
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4">
+            <CardContent className="grid  lg:grid-cols-2 sm:grid-cols-2 max-sm:grid-cols-1 gap-4">
               <div>
                 <Label className="text-white " >Xodimlar soni</Label>
                 <Input

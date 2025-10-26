@@ -233,19 +233,27 @@ const AdminDashboard = () => {
                 {/* Asosiy ma'lumotlar */}
                 <div className="flex-1 sm:order-1 min-w-0 overflow-hidden">
                   {/* Name */}
-                  <p className="text-gray-100 font-medium truncate text-sm sm:text-base">
-                    {contact.name}
-                  </p>
+              {/``* Name */}
+              <div className="lg:w-full sm:w-full max-sm:w-44">
+                <p className="truncate text-gray-100 font-medium text-sm sm:text-sm">
+                  {contact.name}
+                </p>
+              </div>
 
-                  {/* Email */}
-                  <p className="text-gray-400 truncate text-xs sm:text-sm">
-                    {contact.email}
-                  </p>
+              {/* Email */}
+              <div className="lg:w-full sm:w-full max-sm:w-44">
+                <p className=" text-gray-400 truncate text-xs sm:text-sm font-medium">
+                  {contact.email}
+                </p>
+              </div>
 
-                  {/* Message */}
-                  <p className="text-gray-500 mt-1 line-clamp-2 text-xs sm:text-sm">
-                    {contact.message}
-                  </p>
+              {/* Message */}
+              <div className="lg:w-full sm:w-full max-sm:w-44">
+                <p className=" text-gray-400 truncate text-xs sm:text-sm font-medium">
+                  {contact.message}
+                </p>
+              </div>``
+
                 </div>
               </div>
             ))}
