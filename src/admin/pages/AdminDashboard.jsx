@@ -233,26 +233,26 @@ const AdminDashboard = () => {
                 {/* Asosiy ma'lumotlar */}
                 <div className="flex-1 sm:order-1 min-w-0 overflow-hidden">
                   {/* Name */}
-              {/``* Name */}
-              <div className="lg:w-full sm:w-full max-sm:w-44">
-                <p className="truncate text-gray-100 font-medium text-sm sm:text-sm">
-                  {contact.name}
-                </p>
-              </div>
+{/* Name */}
+<div className="lg:w-full sm:w-full max-sm:w-44">
+  <p className="truncate text-gray-100 font-medium text-sm sm:text-sm">
+    {contact.name}
+  </p>
+</div>
 
-              {/* Email */}
-              <div className="lg:w-full sm:w-full max-sm:w-44">
-                <p className=" text-gray-400 truncate text-xs sm:text-sm font-medium">
-                  {contact.email}
-                </p>
-              </div>
+{/* Email */}
+<div className="lg:w-full sm:w-full max-sm:w-44">
+  <p className=" text-gray-400 truncate text-xs sm:text-sm font-medium">
+    {contact.email}
+  </p>
+</div>
 
-              {/* Message */}
-              <div className="lg:w-full sm:w-full max-sm:w-44">
-                <p className=" text-gray-400 truncate text-xs sm:text-sm font-medium">
-                  {contact.message}
-                </p>
-              </div>``
+{/* Message */}
+<div className="lg:w-full sm:w-full max-sm:w-44">
+  <p className=" text-gray-400 truncate text-xs sm:text-sm font-medium">
+    {contact.message}
+  </p>
+</div>
 
                 </div>
               </div>
