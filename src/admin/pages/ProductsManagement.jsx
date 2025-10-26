@@ -139,6 +139,7 @@ const ProductsManagement = () => {
     try {
       const formDataToSend = new FormData();
 
+
       Object.entries(formData).forEach(([key, value]) => {
         if (!value) return;
 
@@ -237,6 +238,7 @@ const ProductsManagement = () => {
           />
         </div>
 
+
         {/* Product List */}
         {loading ? (
           <p className="text-gray-500 text-center py-10">Mahsulotlar yuklanmoqda...</p>
@@ -282,9 +284,10 @@ const ProductsManagement = () => {
           </div>
         )}
 
+
         {/* View Dialog */}
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-          <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-2xl">
+          <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
             {viewingProduct && (
               <>
                 <DialogHeader>
@@ -332,111 +335,65 @@ const ProductsManagement = () => {
           </DialogContent>
         </Dialog>
 
+
         {/* Add/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 {editingProduct ? 'Mahsulotni Tahrirlash' : 'Mahsulot Qo‘shish'}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Names */}
-              <div className="grid grid-cols-2 gap-4">
-                {['name_uz', 'name_ru'].map((key) => (
-                  <div className="space-y-2" key={key}>
-                    <Label>{getLabel(key)}</Label>
-                    <Input
-                      value={formData[key]}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-gray-100"
-                      required
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Categories */}
-              <div className="grid grid-cols-2 gap-4">
-                {['category_uz', 'category_ru'].map((key) => (
-                  <div className="space-y-2" key={key}>
-                    <Label>{getLabel(key)}</Label>
-                    <Input
-                      value={formData[key]}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-gray-100"
-                      required
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Specifications */}
-              <div className="grid grid-cols-2 gap-4">
-                {['specification_uz', 'specification_ru'].map((key) => (
-                  <div className="space-y-2" key={key}>
-                    <Label>{getLabel(key)}</Label>
+              {/* Single Inputs */}
+              {['name_uz','name_ru','category_uz','category_ru','specification_uz','specification_ru','price','content_uz','content_ru'].map((key) => (
+                <div className="space-y-2" key={key}>
+                  <Label>{getLabel(key)}</Label>
+                  {key.startsWith('specification') ? (
                     <Textarea
                       value={formData[key]}
                       onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
                       className="bg-gray-800 border-gray-700 text-gray-100 min-h-28"
-                      placeholder={
-                        key.includes('_uz')
-                          ? 'Rangi: Qora\nOg‘irligi: 2kg'
-                          : 'Цвет: Чёрный\nВес: 2 кг'
-                      }
+                      placeholder={key.includes('_uz') ? 'Rangi: Qora\nOg‘irligi: 2kg' : 'Цвет: Чёрный\nВес: 2 кг'}
                     />
-                  </div>
-                ))}
-              </div>
-
-              {/* Price & Image */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{getLabel('price')}</Label>
-                  <Input
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>{getLabel('image')}</Label>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
-                    className="bg-gray-800 border-gray-700 text-gray-100"
-                    required={!editingProduct}
-                  />
-                  {(formData.image || editingProduct?.image || editingProduct?.image_url) && (
-                    <img
-                      src={
-                        formData.image
-                          ? URL.createObjectURL(formData.image)
-                          : editingProduct?.image || editingProduct?.image_url
-                      }
-                      alt="Preview"
-                      className="w-48 h-32 object-cover rounded-lg mt-2 border border-gray-700"
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Descriptions */}
-              <div className="grid grid-cols-2 gap-4">
-                {['content_uz', 'content_ru'].map((key) => (
-                  <div className="space-y-2" key={key}>
-                    <Label>{getLabel(key)}</Label>
+                  ) : key.startsWith('content') ? (
                     <Textarea
                       value={formData[key]}
                       onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                      className="bg-gray-800 border-gray-700 text-gray-100 min-h-28"
+                    />
+                  ) : (
+                    <Input
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="bg-gray-800 border-gray-700 text-gray-100"
                       required
                     />
-                  </div>
-                ))}
+                  )}
+                </div>
+              ))}
+
+              {/* Image */}
+              <div className="space-y-2">
+                <Label>{getLabel('image')}</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  required={!editingProduct}
+                />
+                {(formData.image || editingProduct?.image || editingProduct?.image_url) && (
+                  <img
+                    src={
+                      formData.image
+                        ? URL.createObjectURL(formData.image)
+                        : editingProduct?.image || editingProduct?.image_url
+                    }
+                    alt="Preview"
+                    className="w-48 h-32 object-cover rounded-lg mt-2 border border-gray-700"
+                  />
+                )}
               </div>
 
               <DialogFooter>
@@ -444,7 +401,7 @@ const ProductsManagement = () => {
                   type="button"
                   variant="outline"
                   onClick={handleCloseDialog}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="border-gray-700 lg:mt-0 max-sm:mt-3 text-gray-300 hover:bg-gray-800"
                   disabled={isSubmitting}
                 >
                   Bekor qilish
@@ -454,33 +411,7 @@ const ProductsManagement = () => {
                   className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <svg
-                        className="animate-spin mr-2 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      {editingProduct ? 'Yangilanmoqda...' : 'Yaratilmoqda...'}
-                    </div>
-                  ) : (
-                    editingProduct ? 'Yangilash' : 'Yaratish'
-                  )}
+                  {isSubmitting ? (editingProduct ? 'Yangilanmoqda...' : 'Yaratilmoqda...') : (editingProduct ? 'Yangilash' : 'Yaratish')}
                 </Button>
               </DialogFooter>
             </form>

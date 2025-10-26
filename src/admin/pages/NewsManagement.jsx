@@ -26,7 +26,7 @@ const NewsManagement = () => {
   const [editingNews, setEditingNews] = useState(null);
   const [viewingNews, setViewingNews] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state for form submission loading
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     title_uz: '',
@@ -38,7 +38,6 @@ const NewsManagement = () => {
     image: null,
   });
 
-  // 🟢 Fetch all news
   const fetchNews = async () => {
     try {
       setLoading(true);
@@ -68,7 +67,6 @@ const NewsManagement = () => {
       item.category_ru?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 🟢 Open Create/Edit dialog
   const handleOpenDialog = (newsItem = null) => {
     if (newsItem) {
       setEditingNews(newsItem);
@@ -101,10 +99,9 @@ const NewsManagement = () => {
     setEditingNews(null);
   };
 
-  // 🟢 Create or Update news
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Set loading state to true
+    setIsSubmitting(true);
 
     try {
       const data = new FormData();
@@ -134,11 +131,11 @@ const NewsManagement = () => {
         variant: 'destructive',
       });
     } finally {
-      setIsSubmitting(false); // Reset loading state
+      setIsSubmitting(false);
     }
   };
 
-  // 🟢 Delete news
+
   const handleDelete = async (id) => {
     if (window.confirm('Ushbu yangilikni o‘chirmoqchimisiz?')) {
       try {
@@ -181,7 +178,7 @@ const NewsManagement = () => {
           </Button>
         </div>
 
-        {/* 🔍 Search */}
+        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
           <Input
@@ -192,17 +189,13 @@ const NewsManagement = () => {
           />
         </div>
 
-        {/* 📰 News List */}
+        {/* News List */}
         {loading ? (
-          <p className="text-gray-500 text-center py-10">Yangiliklar Yuklanmoqda...</p>
+          <p className="text-gray-500 text-center py-10">Yangiliklar yuklanmoqda...</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredNews.map((item, index) => (
-              <Card
-                key={item.id}
-                className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-[1.02] backdrop-blur-sm group"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
+              <Card key={item.id} className="bg-gray-900/50 border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-[1.02] backdrop-blur-sm group">
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
                     <img
@@ -221,17 +214,13 @@ const NewsManagement = () => {
                         <Trash2 size={16} />
                       </Button>
                     </div>
-                    <div className="absolute bottom-2 left-2">
-                      <span className="bg-purple-600/90 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
-                        {item.category_uz}
-                      </span>
-                    </div>
                   </div>
                   <div className="p-5">
                     <h3 className="text-xl font-semibold text-gray-100 mb-2 line-clamp-2 group-hover:text-purple-400 transition-colors">
                       {item.title_uz}
                     </h3>
                     <p className="text-gray-400 text-sm mb-3 line-clamp-2">{item.content_uz}</p>
+                    
                     <div className="flex items-center text-gray-500 text-sm">
                       <Calendar size={14} className="mr-2" />
                       {new Date(item.created_at).toLocaleDateString('uz-UZ', {
@@ -247,7 +236,7 @@ const NewsManagement = () => {
           </div>
         )}
 
-        {/* 🟢 Create/Edit Dialog */}
+        {/* Create/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -257,35 +246,68 @@ const NewsManagement = () => {
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                {["title_uz", "title_ru"].map((key) => (
-                  <div className="space-y-2" key={key}>
-                    <Label>{key.includes('_uz') ? 'Sarlavha (UZ)' : 'Sarlavha (RU)'}</Label>
-                    <Input
-                      value={formData[key]}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-gray-100"
-                      required
-                    />
-                  </div>
-                ))}
+              <div className="space-y-2">
+                <Label>Sarlavha (UZ)</Label>
+                <Input
+                  value={formData.title_uz}
+                  onChange={(e) => setFormData({ ...formData, title_uz: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  required
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                {["category_uz", "category_ru"].map((key) => (
-                  <div className="space-y-2" key={key}>
-                    <Label>{key.includes('_uz') ? 'Kategoriya (UZ)' : 'Kategoriya (RU)'}</Label>
-                    <Input
-                      value={formData[key]}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-gray-100"
-                      required
-                    />
-                  </div>
-                ))}
+              <div className="space-y-2">
+                <Label>Sarlavha (RU)</Label>
+                <Input
+                  value={formData.title_ru}
+                  onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  required
+                />
               </div>
 
-              {/* 🟢 Image Upload */}
+              <div className="space-y-2">
+                <Label>Kategoriya (UZ)</Label>
+                <Input
+                  value={formData.category_uz}
+                  onChange={(e) => setFormData({ ...formData, category_uz: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Kategoriya (RU)</Label>
+                <Input
+                  value={formData.category_ru}
+                  onChange={(e) => setFormData({ ...formData, category_ru: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Matn (UZ)</Label>
+                <Textarea
+                  value={formData.content_uz}
+                  onChange={(e) => setFormData({ ...formData, content_uz: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Matn (RU)</Label>
+                <Textarea
+                  value={formData.content_ru}
+                  onChange={(e) => setFormData({ ...formData, content_ru: e.target.value })}
+                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
+                  required
+                />
+              </div>
+              
+
+              {/* Image Upload */}
               <div className="space-y-2">
                 <Label>Rasm</Label>
                 <Input
@@ -295,39 +317,13 @@ const NewsManagement = () => {
                   className="bg-gray-800 border-gray-700 text-gray-100"
                   required={!editingNews}
                 />
-                {/* 🟢 Preview selected image */}
                 {(formData.image || editingNews?.image) && (
                   <img
-                    src={
-                      formData.image
-                        ? URL.createObjectURL(formData.image)
-                        : editingNews?.image || editingNews?.image_url
-                    }
+                    src={formData.image ? URL.createObjectURL(formData.image) : editingNews?.image || editingNews?.image_url}
                     alt="Preview"
                     className="w-48 h-32 object-cover rounded-lg mt-2 border border-gray-700"
                   />
                 )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Matn (UZ)</Label>
-                  <Textarea
-                    value={formData.content_uz}
-                    onChange={(e) => setFormData({ ...formData, content_uz: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Matn (RU)</Label>
-                  <Textarea
-                    value={formData.content_ru}
-                    onChange={(e) => setFormData({ ...formData, content_ru: e.target.value })}
-                    className="bg-gray-800 border-gray-700 text-gray-100 min-h-32"
-                    required
-                  />
-                </div>
               </div>
 
               <DialogFooter>
@@ -335,7 +331,7 @@ const NewsManagement = () => {
                   type="button"
                   variant="outline"
                   onClick={handleCloseDialog}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="border-gray-700 lg:mt-0 max-sm:mt-3 text-gray-300 hover:bg-gray-800"
                   disabled={isSubmitting}
                 >
                   Bekor qilish
@@ -345,40 +341,14 @@ const NewsManagement = () => {
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <svg
-                        className="animate-spin mr-2 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      {editingNews ? 'Yangilanmoqda...' : 'Yaratilmoqda...'}
-                    </div>
-                  ) : (
-                    editingNews ? 'Yangilash' : 'Yaratish'
-                  )}
+                  {isSubmitting ? (editingNews ? 'Yangilanmoqda...' : 'Yaratilmoqda...') : (editingNews ? 'Yangilash' : 'Yaratish')}
                 </Button>
               </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
 
-        {/* 🟢 View Dialog */}
+        {/* View Dialog */}
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
           <DialogContent className="bg-gray-900 border-gray-800 text-gray-100 max-w-2xl max-h-[90vh] overflow-y-auto">
             {viewingNews && (
@@ -430,5 +400,6 @@ const NewsManagement = () => {
     </AdminLayout>
   );
 };
+
 
 export default NewsManagement;
