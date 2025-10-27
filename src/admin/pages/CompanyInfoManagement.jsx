@@ -126,7 +126,7 @@ const CompanyInfoManagement = () => {
                   id="about_uz"
                   value={formData.about_uz || ""}
                   onChange={(e) => handleChange('about_uz', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-24"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[320px] text-gray-100 min-h-24 max-sm:h-[250px]"
                 />
               </div>
               <div className="space-y-2">
@@ -135,7 +135,7 @@ const CompanyInfoManagement = () => {
                   id="about_ru"
                   value={formData.about_ru || ""}
                   onChange={(e) => handleChange('about_ru', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-24"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[370px] max-sm:h-[250px] text-gray-100 min-h-24"
                 />
               </div>
             </CardContent>
@@ -156,7 +156,7 @@ const CompanyInfoManagement = () => {
                   id="history_uz"
                   value={formData.history_uz || ""}
                   onChange={(e) => handleChange('history_uz', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-24"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[270px] max-sm:h-[250px] text-gray-100 min-h-24"
                 />
               </div>
               <div className="space-y-2">
@@ -165,7 +165,7 @@ const CompanyInfoManagement = () => {
                   id="history_ru"
                   value={formData.history_ru || ""}
                   onChange={(e) => handleChange('history_ru', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100 min-h-24"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[280px] max-sm:h-[250px] text-gray-100 min-h-24"
                 />
               </div>
             </CardContent>
@@ -182,16 +182,17 @@ const CompanyInfoManagement = () => {
                 <Textarea
                   value={formData.mission_uz || ""}
                   onChange={(e) => handleChange('mission_uz', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[240px] max-sm:h-[150px] text-gray-100"
                 />
                 <Label className="text-white "  >Maqsad (Russian)</Label>
                 <Textarea
                   value={formData.mission_ru || ""}
                   onChange={(e) => handleChange('mission_ru', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[240px] max-sm:h-[150px] text-gray-100"
                 />
               </CardContent>
             </Card>
+
 
             <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
               <CardHeader>
@@ -202,17 +203,25 @@ const CompanyInfoManagement = () => {
                 <Textarea
                   value={formData.vision_uz || ""}
                   onChange={(e) => handleChange('vision_uz', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[240px] max-sm:h-[200px] text-gray-100"
                 />
                 <Label className="text-white " >Maqsad ko'rinishi (Russian)</Label>
                 <Textarea
                   value={formData.vision_ru || ""}
                   onChange={(e) => handleChange('vision_ru', e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-gray-100"
+                  className="bg-gray-800 border-gray-700 max-[500px]:h-[240px] max-sm:h-[200px] text-gray-100"
                 />
               </CardContent>
             </Card>
           </div>
+
+
+
+
+
+
+
+
 
           {/* Contact Info */}
           <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">

@@ -250,3 +250,62 @@ code {
       content: "...";
     }
   }
+
+  index.css
+ /* manejment */
+
+  .custom-dialog-content {
+  width: 100%;
+  max-width: 640px;
+  min-height: 200px;
+  overflow-wrap: break-word;
+  overflow-y: auto;
+}
+
+
+/* Uzun matnlar va email manzillarni to'g'ri o'rash uchun */
+.responsive-truncate-email {
+  display: inline-block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  word-break: break-all;
+}
+
+.responsive-truncate-xabar {
+  display: inline-block;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  word-break: break-all;
+}
+
+.responsive-truncate-mass {
+  display: inline-block;
+  max-width: 500px;
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  word-break: break-all; */
+}
+
+/* Kichik ekranlar uchun moslashuv */
+@media (max-width: 640px) {
+  .responsive-truncate-email {
+    max-width: 300px;
+  }
+}
+
+/* Juda uzun xabarlar uchun */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* -webkit-box-orient: vertical; */
+  overflow: hidden;
+  word-break: break-word;
+}

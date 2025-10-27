@@ -138,7 +138,7 @@ const AdminLayout = ({ children }) => {
           sidebarOpen ? 'ml-64' : 'ml-20'
         }`}
       >
-        <div className="p-8">{children}</div>
+        <div className="lg:p-8 sm:p-5 max-sm:p-2">{children}</div>
       </main>
     </div>
   );

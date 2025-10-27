@@ -220,7 +220,7 @@ const ProductsManagement = () => {
           </div>
           <Button
             onClick={() => handleOpenDialog()}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20 absolute top-[-10px] right-[-10px] md:static"
+            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20 absolute top-[10px] right-[10px] md:static"
           >
             <Plus className="mr-2" size={20} />
             Mahsulot Qo‘shish

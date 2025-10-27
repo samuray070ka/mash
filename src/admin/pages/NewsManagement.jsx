@@ -164,14 +164,14 @@ const NewsManagement = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mt-8 md:mt-0 mb-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mt-14 md:mt-0 mb-2">
               Yangiliklar boshqaruvi
             </h1>
             <p className="text-gray-400">Zavod yangiliklari va yangilanishlarini boshqaring</p>
           </div>
           <Button
             onClick={() => handleOpenDialog()}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20 absolute top-5 right-5 md:static"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20 absolute top-[15px] right-[15px] md:static"
           >
             <Plus className="mr-2" size={20} />
             Yangilik qo'shish
@@ -180,7 +180,7 @@ const NewsManagement = () => {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 " size={20} />
           <Input
             placeholder="Yangilikni qidirish..."
             value={searchTerm}
