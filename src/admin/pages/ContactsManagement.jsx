@@ -78,7 +78,7 @@ const ContactsManagement = () => {
 
   // 🔹 Delete contact (API + UI)
   const handleDelete = async (contactId) => {
-    if (window.confirm('Are you sure you want to delete this contact submission?')) {
+    if (window.confirm("Siz ushbu kontakt yuborilishini o‘chirmoqchimisiz?")) {
       try {
         await aPi.delete(`${API}${contactId}/`);
         setContacts(contacts.filter((c) => c.id !== contactId));
