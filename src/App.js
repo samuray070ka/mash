@@ -26,11 +26,19 @@ const Contact = lazy(() => import('./pages/Contact'));
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50">
     <div className="relative">
-      {/* <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div> */}
+      {/* Katta spinner */}
       <div
+        className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"
+        style={{ animationDuration: '5s' }} // 5 soniyaga cho‘zildi
+      ></div>
+
+      {/* Kichkina spinner — hozircha komentga olingan */}
+
+      {/* <div
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"
         style={{ animationDirection: 'reverse', animationDuration: '0.8s' }}
-      ></div>
+      ></div> */}
+
     </div>
   </div>
 );
